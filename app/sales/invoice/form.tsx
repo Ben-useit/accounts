@@ -2,6 +2,7 @@
 import { actionNewInvoice } from '@/actions';
 import ButtonPanel from '@/components/ButtonPanel';
 import DateInputField from '@/components/DateInputField';
+import NumberInputField from '@/components/NumberInputField';
 import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
 import { useActionState, useState, useRef } from 'react';
@@ -57,7 +58,7 @@ const Form = () => {
             />
           </div>
           <div className='col-start-4'>
-            <TextInputField label='Amount' name='amount' placeholder='' />
+            <NumberInputField label='Amount1' name='amount' placeholder='' />
           </div>
         </div>
         <div className='mt-6 grid grid-cols-5  gap-4'>
