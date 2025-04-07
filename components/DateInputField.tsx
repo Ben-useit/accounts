@@ -41,6 +41,7 @@ const DateInputField = ({
             id={name}
             className={`w-full py-1.5 pr-3 pl-1 text-gray-900  placeholder:text-gray-400 focus:outline-none sm:text-sm/6`}
             placeholder={placeholder}
+            defaultValue={getDateString()}
             onBlur={validateInput}
           />
         </div>
@@ -62,4 +63,12 @@ const convertStringToDate = (value: string) => {
   const dateString = `${parts[2]}-${parts[1]}-${parts[0]}`;
   const date = new Date(dateString);
   return date.toString() === 'Invalid Date' ? null : date;
+};
+
+const getDateString = () => {
+  const today = new Date();
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed, so add 1
+  const year = today.getFullYear();
+  return `${day}/${month}/${year}`;
 };

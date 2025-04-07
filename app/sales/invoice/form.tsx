@@ -1,21 +1,16 @@
 'use client';
-import { actionNewInvoice } from '@/actions';
+
 import ButtonPanel from '@/components/ButtonPanel';
 import DateInputField from '@/components/DateInputField';
 import NumberInputField from '@/components/NumberInputField';
 import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
 import { useActionState, useState, useRef } from 'react';
+import { actionNewInvoice } from './actions';
 
-const clients = [
-  { id: 1, name: 'Macsteel' },
-  { id: 2, name: 'Cure' },
-  { id: 3, name: 'Imani' },
-  { id: 4, name: 'Savjani' },
-];
-const Form = () => {
+const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
   const [clientId, setClientId] = useState(1);
-  const [vatVal, setVatVal] = useState(1);
+  const [vatVal, setVatVal] = useState(2);
   const formRef = useRef<HTMLFormElement>(null);
   const action = async (prevState: string | null, formdata: FormData) => {
     const actionResult = await actionNewInvoice(clientId, vatVal, formdata);
@@ -58,7 +53,7 @@ const Form = () => {
             />
           </div>
           <div className='col-start-4'>
-            <NumberInputField label='Amount1' name='amount' placeholder='' />
+            <NumberInputField label='Amount' name='amount' placeholder='' />
           </div>
         </div>
         <div className='mt-6 grid grid-cols-5  gap-4'>
@@ -72,7 +67,7 @@ const Form = () => {
               onSelect={setVatVal}
               entries={[
                 { id: 0, name: '0.0 %' },
-                { id: 16.5, name: '16.5 %' },
+                { id: 0.165, name: '16.5 %' },
               ]}
             />
           </div>

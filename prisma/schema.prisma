@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Client {
+  id    Int     @id @default(autoincrement())
+  name  String @unique
+  address String? 
+  transactions Transaction[]
+}
+
+
+enum AccountType {
+  ASSETS
+  INCOME
+  EXPENSES
+  EQUITY
+  LIABILITIES
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+  name String
+  member Account[]
+}
+
+model Account {
+  id   Int  @id @default(autoincrement())
+  name String
+  type AccountType
+  description String?
+  group Group? @relation(fields: [groupId], references: [id])
+  groupId Int ?
+  currency Currency @relation(fields: [currencyId], references: [id])
+  currencyId Int
+  //taxable Boolean ?
+  debit Transaction[] @relation("debit")
+  credit Transaction[] @relation("credit")
+
+}
+
+model Currency {
+  id   Int  @id @default(autoincrement())
+  name String
+  account Account[] 
+}
+
+model Transaction {
+  id       Int  @id @default(autoincrement())
+  date DateTime
+  amount Decimal
+  debit   Account @relation(name: "debit", fields: [debitId], references: [id])
+  debitId Int 
+  credit   Account @relation(name: "credit", fields: [creditId], references: [id])
+  creditId Int 
+  description String? 
+  //detail TransactionDetail @relation(fields: [detailId], references: [id])
+  //detailId Int 
+  client Client? @relation(fields:[clientId], references: [id])
+  clientId Int?
+}

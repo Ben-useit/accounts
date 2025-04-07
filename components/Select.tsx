@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 export type DropDownType = {
@@ -35,6 +35,11 @@ const Select = ({
 
   const [selectedOption, setSelectedOption] =
     useState<DropDownType>(preSelected);
+
+  useEffect(() => {
+    onSelect(preSelected.id);
+  }, []);
+
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const selectItem = (option: DropDownType) => {
