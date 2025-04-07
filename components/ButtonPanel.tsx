@@ -1,8 +1,10 @@
 const ButtonPanel = ({
   cancelButton = false,
+  cancelAction,
   label,
 }: {
   cancelButton?: boolean;
+  cancelAction?: () => void;
   label: string;
 }) => {
   return (
@@ -10,6 +12,7 @@ const ButtonPanel = ({
       {cancelButton ? (
         <button
           type='button'
+          onClick={cancelAction}
           className='rounded-md bg-gray-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600'
         >
           Cancel

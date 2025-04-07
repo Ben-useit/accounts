@@ -129,7 +129,7 @@ const TesthtmlForm = () => {
           </div>
         </div>
 
-        {/* <div className='border-b border-gray-900/10 pb-12'>
+        <div className='border-b border-gray-900/10 pb-12'>
           <h2 className='text-base/7 font-semibold text-gray-900'>
             Personal InhtmlFormation
           </h2>
@@ -298,9 +298,9 @@ const TesthtmlForm = () => {
               </div>
             </div>
           </div>
-        </div> */}
+        </div>
 
-        {/* <div className='border-b border-gray-900/10 pb-12'>
+        <div className='border-b border-gray-900/10 pb-12'>
           <h2 className='text-base/7 font-semibold text-gray-900'>
             Notifications
           </h2>
@@ -505,10 +505,10 @@ const TesthtmlForm = () => {
               </div>
             </fieldset>
           </div>
-        </div> */}
+        </div>
       </div>
 
-      {/* <div className='mt-6 flex items-center justify-end gap-x-6'>
+      <div className='mt-6 flex items-center justify-end gap-x-6'>
         <button type='button' className='text-sm/6 font-semibold text-gray-900'>
           Cancel
         </button>
@@ -518,7 +518,7 @@ const TesthtmlForm = () => {
         >
           Save
         </button>
-      </div> */}
+      </div>
     </form>
   );
 };
