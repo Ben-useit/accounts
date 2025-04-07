@@ -1,6 +1,7 @@
 'use client';
 import { actionNewInvoice } from '@/actions';
 import ButtonPanel from '@/components/ButtonPanel';
+import DateInputField from '@/components/DateInputField';
 import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
 import { useActionState, useState, useRef } from 'react';
@@ -41,10 +42,10 @@ const Form = () => {
 
           {/* </div>
         <div className='mt-2 grid grid-cols-4  gap-4'> */}
-          <TextInputField
+          <DateInputField
             label='Date'
             name='date'
-            placeholder='Enter date dd/mm/yy'
+            placeholder='Enter date dd/mm/yyyy'
           />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
