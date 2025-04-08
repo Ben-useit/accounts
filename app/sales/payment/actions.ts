@@ -8,6 +8,7 @@ import {
   convertStringToDate,
   convertStringToNumber,
 } from '@/utils/convert';
+import { redirect } from 'next/navigation';
 
 export const getInvoiceDetails = async (invoicedId: number) => {
   let data = await prisma.transaction.findFirst({
@@ -96,6 +97,6 @@ export const actionInvoicePayment = async (
       payed: true,
     },
   });
-  //redirect('/sales/payment');
+  redirect('/sales/payment');
   return 'Payment processed';
 };
