@@ -18,7 +18,7 @@ model Client {
   id    Int     @id @default(autoincrement())
   name  String @unique
   address String? 
-  transactions Transaction[]
+  invoices Invoice[]
 }
 
 
@@ -57,6 +57,15 @@ model Currency {
   account Account[] 
 }
 
+model Invoice {
+  id   Int  @id @default(autoincrement())
+  name String
+  transaction Transaction[]
+  payed Boolean @default(false)
+  client Client? @relation(fields:[clientId], references: [id])
+  clientId Int?
+}
+
 model Transaction {
   id       Int  @id @default(autoincrement())
   date DateTime
@@ -68,6 +77,8 @@ model Transaction {
   description String? 
   //detail TransactionDetail @relation(fields: [detailId], references: [id])
   //detailId Int 
-  client Client? @relation(fields:[clientId], references: [id])
-  clientId Int?
+  // client Client? @relation(fields:[clientId], references: [id])
+  // clientId Int?
+  invoice Invoice? @relation(fields:[invoiceId], references: [id])
+  invoiceId Int?
 }

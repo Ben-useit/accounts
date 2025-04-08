@@ -23,6 +23,11 @@ export const sideBarItems = [
         text: 'Invoice',
         url: '/sales/invoice',
       },
+      {
+        icon: <DocumentTextIcon />,
+        text: 'Invoice Payment',
+        url: '/sales/payment',
+      },
     ],
   },
   {

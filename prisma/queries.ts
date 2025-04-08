@@ -27,9 +27,33 @@ type TransactionType = {
   debitId: number;
   creditId: number;
   description: string;
+  invoiceId: number;
+};
+
+type InvoiceType = {
+  name: string;
   clientId: number;
 };
 
 export const transaction = async (data: TransactionType) => {
   const result = await prisma.transaction.create({ data: data });
+  return result;
+};
+
+export const createInvoice = async (data: InvoiceType) => {
+  const result = await prisma.invoice.create({ data });
+  return result;
+};
+
+export const getInvoices = async () => {
+  const result = await prisma.invoice.findMany({
+    where: {
+      payed: false,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+  return result;
 };

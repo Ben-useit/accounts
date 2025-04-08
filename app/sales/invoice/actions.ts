@@ -1,6 +1,6 @@
 'use server';
 
-import { getAccount, transaction } from '@/prisma/queries';
+import { getAccount, transaction, createInvoice } from '@/prisma/queries';
 import { convertStringToDate, convertStringToNumber } from '@/utils/convert';
 
 export const actionNewInvoice = async (
@@ -22,6 +22,13 @@ export const actionNewInvoice = async (
     const vatNumber = amountNumber * 0.165;
     vat = Number(vatNumber.toFixed(2));
   }
+  // Create Invoice first
+  const invoiceData = {
+    name: description as string,
+    clientId,
+  };
+
+  const invoice = await createInvoice(invoiceData);
 
   // Need two accounts: Receivable debit, Income or Reimbursement is credit
   const creditId = reimbursement
@@ -34,19 +41,22 @@ export const actionNewInvoice = async (
     debitId,
     creditId,
     description: description as string,
-    clientId,
+    invoiceId: invoice.id,
   };
   await transaction(data);
+
   if (vat == 0) return 'Invoice booked';
   const vatId = (await getAccount('VAT')).id;
+
   data = {
     date: dateObj,
     amount: vat,
     debitId: creditId,
     creditId: vatId,
-    description: description as string,
-    clientId,
+    description: `${description as string} VAT`,
+    invoiceId: invoice.id,
   };
   await transaction(data);
+
   return 'Invoice booked';
 };

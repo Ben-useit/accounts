@@ -1,20 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const DateInputField = ({
   label,
   placeholder = '',
   name,
   type = 'text',
+  initial = '',
 }: {
   label: string;
   name: string;
   type?: string;
   placeholder?: string;
+  initial?: string;
 }) => {
+  const dateValue = initial == '' ? getDateString() : initial;
   const [error, setError] = useState<string | null>(null);
   const [color, setColor] = useState('outline-1 outline-gray-300');
+  const [value, setValue] = useState<string>(dateValue);
+
+  useEffect(() => setValue(dateValue), [initial]);
   const validateInput = (e: { target: { value: string } }) => {
     const result = convertStringToDate(e.target.value);
     if (!result) {
@@ -41,7 +47,9 @@ const DateInputField = ({
             id={name}
             className={`w-full py-1.5 pr-3 pl-1 text-gray-900  placeholder:text-gray-400 focus:outline-none sm:text-sm/6`}
             placeholder={placeholder}
-            defaultValue={getDateString()}
+            // defaultValue={getDateString()}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             onBlur={validateInput}
           />
         </div>

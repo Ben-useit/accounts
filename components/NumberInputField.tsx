@@ -1,21 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const NumberInputField = ({
   label,
   placeholder = '',
   name,
   type = 'text',
+  initial = '',
 }: {
   label: string;
   name: string;
   type?: string;
   placeholder?: string;
+  initial?: string;
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [color, setColor] = useState('outline-1 outline-gray-300');
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>(initial);
+
+  useEffect(() => setValue(initial), [initial]);
   const validateInput = (e: { target: { value: string } }) => {
     const isNumber = validate(e.target.value);
     if (!isNumber) {
@@ -24,7 +28,7 @@ const NumberInputField = ({
     } else {
       setColor('outline-1 outline-gray-300');
       setError(null);
-      const formattedNumber = convertStringToNumber(e.target.value);
+      const formattedNumber = formatString(e.target.value);
       setValue(formattedNumber);
     }
   };
@@ -73,7 +77,7 @@ const validate = (input: string) => {
  * @param value
  * @returns A string with seperator and decimal point: eg. 25,400.00
  */
-const convertStringToNumber = (value: string): string => {
+const formatString = (value: string): string => {
   // Remove all non-numeric characters except for the decimal point
   let numericValue = value.replace(/[^\d.-]/g, '');
 
