@@ -6,6 +6,8 @@ import {
   ShoppingCartIcon,
   UserPlusIcon,
   ListBulletIcon,
+  CircleStackIcon,
+  SquaresPlusIcon,
 } from '@heroicons/react/24/outline';
 
 export const sideBarItems = [
@@ -43,6 +45,23 @@ export const sideBarItems = [
         icon: <BanknotesIcon />,
         text: 'Withdrawal',
         url: '/purchases/withdrawal',
+      },
+    ],
+  },
+  {
+    icon: <CircleStackIcon />,
+    text: 'Transactions',
+
+    subMenu: [
+      {
+        icon: <SquaresPlusIcon />,
+        text: 'New Transaction',
+        url: '/transactions/new',
+      },
+      {
+        icon: <ListBulletIcon />,
+        text: 'List Transactions',
+        url: '/transactions/list',
       },
     ],
   },

@@ -15,6 +15,13 @@ export const getClients = async (all = false) => {
   return result;
 };
 
+export const getAccounts = async () => {
+  const result = await prisma.account.findMany({
+    select: { id: true, name: true },
+  });
+  return result;
+};
+
 export const getAccount = async (name: string) => {
   const result = await prisma.account.findFirst({ where: { name: name } });
   if (!result) throw new Error(`Account ${name} does not exist`);
