@@ -58,10 +58,12 @@ export const getInvoices = async () => {
   return result;
 };
 
-export const getExpensesAccounts = async () => {
+export const getExpensesAccounts = async (personal = true) => {
+  const domain = personal ? 'PERSONAL' : 'BUSINESS';
   const result = await prisma.account.findMany({
     where: {
       type: 'EXPENSES',
+      domain: domain,
     },
     select: { id: true, name: true },
   });

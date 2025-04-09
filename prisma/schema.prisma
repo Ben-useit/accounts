@@ -30,6 +30,11 @@ enum AccountType {
   LIABILITIES
 }
 
+enum Domain {
+  BUSINESS
+  PERSONAL
+}
+
 model Group {
   id Int @id @default(autoincrement())
   name String
@@ -48,6 +53,7 @@ model Account {
   //taxable Boolean ?
   debit Transaction[] @relation("debit")
   credit Transaction[] @relation("credit")
+  domain Domain @default(BUSINESS)
 
 }
 
