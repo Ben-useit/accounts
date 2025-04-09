@@ -27,7 +27,7 @@ type TransactionType = {
   debitId: number;
   creditId: number;
   description: string;
-  invoiceId: number;
+  invoiceId?: number;
 };
 
 type InvoiceType = {
@@ -54,6 +54,26 @@ export const getInvoices = async () => {
       id: true,
       name: true,
     },
+  });
+  return result;
+};
+
+export const getExpensesAccounts = async () => {
+  const result = await prisma.account.findMany({
+    where: {
+      type: 'EXPENSES',
+    },
+    select: { id: true, name: true },
+  });
+  return result;
+};
+
+export const getFundsAccounts = async () => {
+  const result = await prisma.account.findMany({
+    where: {
+      group: { name: 'Funds' },
+    },
+    select: { id: true, name: true },
   });
   return result;
 };
