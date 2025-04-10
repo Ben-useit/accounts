@@ -3,7 +3,6 @@ import Form from './form';
 
 const InvoicePayment = async () => {
   const invoices = await getInvoices();
-  console.log('page load: ', invoices);
 
   if (invoices.length == 0) return <h1>No unpayed invoices!</h1>;
 

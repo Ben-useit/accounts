@@ -51,8 +51,7 @@ export const actionInvoicePayment = async (
   wht: number,
   formData: FormData
 ) => {
-  const { date, description, amount, vat } = Object.fromEntries(formData);
-  console.log(invoiceId, date, description, amount, vat, wht);
+  const { date, description, amount } = Object.fromEntries(formData);
 
   const amountNumber = convertStringToNumber(amount as string);
   if (amountNumber == null) return 'Amount is not a valid number';

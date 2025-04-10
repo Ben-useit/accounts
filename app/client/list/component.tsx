@@ -1,6 +1,7 @@
 'use client';
 
 import { convertNumberToString } from '@/utils/convert';
+import { redirect } from 'next/navigation';
 
 function ClientList({
   clients,
@@ -8,7 +9,7 @@ function ClientList({
   clients: { id: number; name: string; balance: number }[];
 }) {
   const handleClick = (clientId: number) => {
-    console.log(clientId);
+    redirect(`/client/${clientId}`);
   };
   return (
     <>

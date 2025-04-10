@@ -1,6 +1,6 @@
 import { getClients } from '@/prisma/queries';
-import ClientList from './form';
-import { getBalance } from './actions';
+import ClientList from './component';
+import { getBalance } from '@/prisma/queries';
 
 const ListClient = async () => {
   const clients = await getClients();
