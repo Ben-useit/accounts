@@ -8,6 +8,9 @@ import {
   ListBulletIcon,
   CircleStackIcon,
   SquaresPlusIcon,
+  PencilSquareIcon,
+  ScaleIcon,
+  PresentationChartBarIcon,
 } from '@heroicons/react/24/outline';
 
 export const sideBarItems = [
@@ -80,5 +83,21 @@ export const sideBarItems = [
       },
     ],
     text: 'Clients',
+  },
+  {
+    icon: <PencilSquareIcon />,
+    subMenu: [
+      {
+        icon: <PresentationChartBarIcon />,
+        text: 'Income Statement',
+        url: '/reports/income',
+      },
+      {
+        icon: <ScaleIcon />,
+        text: 'Balance Sheet',
+        url: '/reports/balance',
+      },
+    ],
+    text: 'Reports',
   },
 ];
