@@ -8,7 +8,7 @@ export const actionNewInvoice = async (
   vatVal: number,
   formData: FormData
 ) => {
-  const { date, description, amount, reimbursement } =
+  const { date, description, amount, reimbursement, openingBalance } =
     Object.fromEntries(formData);
 
   const amountNumber = convertStringToNumber(amount as string);
@@ -31,9 +31,14 @@ export const actionNewInvoice = async (
   const invoice = await createInvoice(invoiceData);
 
   // Need two accounts: Receivable debit, Income or Reimbursement is credit
-  const creditId = reimbursement
-    ? (await getAccount('Reimbursement')).id
-    : (await getAccount('Consulting')).id;
+  // If openingBalance is checked use this instead
+  let creditId: number;
+  if (openingBalance) creditId = (await getAccount('Opening Balance')).id;
+  else {
+    creditId = reimbursement
+      ? (await getAccount('Reimbursement')).id
+      : (await getAccount('Consulting')).id;
+  }
   const debitId = (await getAccount('Receivables')).id;
   let data = {
     date: dateObj,
@@ -45,7 +50,7 @@ export const actionNewInvoice = async (
   };
   await transaction(data);
 
-  if (vat == 0) return 'Invoice booked';
+  if (openingBalance || vat == 0) return 'Invoice booked';
   const vatId = (await getAccount('VAT')).id;
 
   data = {

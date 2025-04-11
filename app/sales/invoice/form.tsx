@@ -7,6 +7,7 @@ import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
 import { useActionState, useState, useRef } from 'react';
 import { actionNewInvoice } from './actions';
+import CheckboxField from '@/components/CheckboxField';
 
 const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
   const [clientId, setClientId] = useState(1);
@@ -74,7 +75,8 @@ const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
         </div>
         <div className='mt-6 grid grid-cols-5  gap-4'>
           <div className='col-start-1 col-span-5 flex justify-end'>
-            <input
+            <CheckboxField label='Reimbursement Invoice' name='reimbursement' />
+            {/* <input
               type='checkbox'
               name='reimbursement'
               className='inline-flex'
@@ -84,7 +86,12 @@ const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
               className='pl-3 py-1.5 pr-3 text-gray-900'
             >
               Reimbursement Invoice
-            </label>
+            </label> */}
+          </div>
+        </div>
+        <div className='mt-6 grid grid-cols-5  gap-4'>
+          <div className='col-start-1 col-span-5 flex justify-end'>
+            <CheckboxField label='As opening balance' name='openingBalance' />
           </div>
         </div>
         <div className='border-b mt-6 border-gray-300'></div>

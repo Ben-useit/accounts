@@ -5,8 +5,10 @@ import { redirect } from 'next/navigation';
 
 function ClientList({
   clients,
+  totalBalance,
 }: {
   clients: { id: number; name: string; balance: number }[];
+  totalBalance: number;
 }) {
   const handleClick = (clientId: number) => {
     redirect(`/client/${clientId}`);
@@ -38,6 +40,13 @@ function ClientList({
           </div>
         );
       })}
+      <div className='grid grid-cols-[10fr_3fr_1fr] gap-2 border-b pt-2 pb-2 mb-2'>
+        <div className=' p-2 font-semibold'></div>
+        <div className=' p-2 text-right font-semibold'>
+          {convertNumberToString(totalBalance)}
+        </div>
+        <div></div>
+      </div>
     </>
   );
 }
