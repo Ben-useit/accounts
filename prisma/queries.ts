@@ -1,5 +1,43 @@
 import prisma from '@/utils/db';
 
+export const getPeriod = async () => {
+  const periodStart = await prisma.setting.findFirst({
+    where: { name: 'periodStart' },
+  });
+  const periodEnd = await prisma.setting.findFirst({
+    where: { name: 'periodEnd' },
+  });
+
+  if (!periodStart || !periodEnd)
+    throw new Error('Configuration Error: Set Period.');
+
+  return { periodStart: periodStart.value, periodEnd: periodEnd.value };
+};
+
+export const setPeriod = async ({
+  dateFrom,
+  dateTo,
+}: {
+  dateFrom: string;
+  dateTo: string;
+}) => {
+  await prisma.setting.update({
+    where: {
+      name: 'periodStart',
+    },
+    data: {
+      value: dateFrom,
+    },
+  });
+  await prisma.setting.update({
+    where: {
+      name: 'periodEnd',
+    },
+    data: {
+      value: dateTo,
+    },
+  });
+};
 export const getClient = async (clientId: number) => {
   const result = await prisma.client.findFirst({
     where: {

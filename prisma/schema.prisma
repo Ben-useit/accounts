@@ -57,6 +57,12 @@ model Account {
 
 }
 
+model Setting {
+  id   Int  @id @default(autoincrement())
+  name String @unique
+  value String
+}
+
 model Currency {
   id   Int  @id @default(autoincrement())
   name String

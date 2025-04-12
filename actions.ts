@@ -1,34 +1,26 @@
-import { getBalances } from '@/actions';
+'use server';
 import prisma from '@/utils/db';
 import { AccountType } from '@prisma/client';
+import { setPeriod } from './prisma/queries';
+
+export const periodSelectAction = async ({
+  dateFrom,
+  dateTo,
+}: {
+  dateFrom: string;
+  dateTo: string;
+}) => {
+  setPeriod({ dateFrom, dateTo });
+};
 
 type BalanceType = {
   name: string;
   balance: number;
 };
 
-export const getRetainedEarning = async ({
-  periodStarts,
-  periodEnds,
-}: {
-  periodStarts: Date;
-  periodEnds: Date;
-}) => {
-  const { total: income } = await getBalances(
-    'INCOME',
-    periodStarts,
-    periodEnds
-  );
-  const { total: expenses } = await getBalances(
-    'EXPENSES',
-    periodStarts,
-    periodEnds
-  );
-  return Math.abs(income) - expenses;
-};
-
-export const getBalancesA = async (
+export const getBalances = async (
   accounttype: AccountType,
+  periodStarts: Date,
   periodEnds: Date
 ) => {
   let total = 0;
@@ -40,20 +32,26 @@ export const getBalancesA = async (
   });
 
   for (const { name } of result) {
-    const balance = await getBalanceA(name, periodEnds);
+    const balance = await getBalance(name, periodStarts, periodEnds);
+
     total += balance;
     balances.push({ name, balance });
   }
   return { total, balances };
 };
 
-const getBalanceA = async (name: string, periodEnds: Date) => {
+const getBalance = async (
+  name: string,
+  periodStarts: Date,
+  periodEnds: Date
+) => {
   const debitResult = await prisma.transaction.aggregate({
     where: {
       debit: {
         name: name,
       },
       date: {
+        gte: periodStarts,
         lte: periodEnds,
       },
     },
@@ -69,6 +67,7 @@ const getBalanceA = async (name: string, periodEnds: Date) => {
         name: name,
       },
       date: {
+        gte: periodStarts,
         lte: periodEnds,
       },
     },

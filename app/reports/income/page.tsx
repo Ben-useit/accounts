@@ -3,21 +3,13 @@ import {
   convertNumberToString,
   convertStringToDate,
 } from '@/utils/convert';
-import { getBalances } from './action';
-import PeriodSelector from './PeriodSelector';
-import { redirect } from 'next/navigation';
+import { getBalances } from '@/actions';
+import { getPeriod } from '@/prisma/queries';
 
-const IncomeStatement = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
-  const { dateFrom, dateTo } = await searchParams;
-  const periodEnds =
-    (convertStringToDate(dateTo as string) as Date) || new Date();
-  const periodStarts =
-    (convertStringToDate(dateFrom as string) as Date) || new Date();
-
+const IncomeStatement = async () => {
+  const data = await getPeriod();
+  const periodStarts = convertStringToDate(data.periodStart) as Date;
+  const periodEnds = convertStringToDate(data.periodEnd) as Date;
   const { total: income, balances: incomeBalances } = await getBalances(
     'INCOME',
     periodStarts,
@@ -31,16 +23,8 @@ const IncomeStatement = async ({
 
   const total = -income - expenses;
 
-  const formAction = async (formData: FormData) => {
-    'use server';
-    const { dateFrom, dateTo } = Object.fromEntries(formData);
-    redirect(`/reports/income?dateFrom=${dateFrom}&dateTo=${dateTo}`);
-  };
   return (
     <div className='lg:w-3/4'>
-      <div className='grid grid-cols-2 mb-4'>
-        <PeriodSelector formAction={formAction} />
-      </div>
       <div className='text-2xl mb-4 font-semibold'>
         Income Statement {convertDateToString(periodStarts)} -{' '}
         {convertDateToString(periodEnds)}
