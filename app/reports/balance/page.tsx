@@ -9,30 +9,40 @@ import { getPeriod } from '@/prisma/queries';
 
 const BalanceSheet = async () => {
   const data = await getPeriod();
-  const periodStarts = convertStringToDate(data.periodStart) as Date;
-  const periodEnds = convertStringToDate(data.periodEnd) as Date;
+  const periodStart = convertStringToDate(data.periodStart) as Date;
+  const periodEnd = convertStringToDate(data.periodEnd) as Date;
   const { total: assets, balances: assetBalances } = await getBalances(
-    'ASSETS',
-    periodStarts,
-    periodEnds
+    { type: 'ASSETS' },
+    {
+      periodStart,
+      periodEnd,
+    }
   );
   const { total: liabilities, balances: liabilitiesBalances } =
-    await getBalances('LIABILITIES', periodStarts, periodEnds);
+    await getBalances(
+      { type: 'LIABILITIES' },
+      {
+        periodStart,
+        periodEnd,
+      }
+    );
   const { total: equity, balances: balancesEquity } = await getBalances(
-    'EQUITY',
-    periodStarts,
-    periodEnds
+    { type: 'EQUITY' },
+    {
+      periodStart,
+      periodEnd,
+    }
   );
 
   const retainedEarning = await getRetainedEarning({
-    periodStarts,
-    periodEnds,
+    periodStart,
+    periodEnd,
   });
 
   return (
     <div className='lg:w-3/4'>
       <div className='text-2xl mb-4 font-semibold'>
-        Balance Sheet {convertDateToString(periodEnds)}
+        Balance Sheet {convertDateToString(periodEnd)}
       </div>
       <div className='text-2xl font-semibold'>Assets</div>
       {assetBalances.map((d, index) => {

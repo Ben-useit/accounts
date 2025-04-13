@@ -1,81 +1,27 @@
 import { getBalances } from '@/actions';
-import prisma from '@/utils/db';
-import { AccountType } from '@prisma/client';
-
-type BalanceType = {
-  name: string;
-  balance: number;
-};
 
 export const getRetainedEarning = async ({
-  periodStarts,
-  periodEnds,
+  periodStart,
+  periodEnd,
 }: {
-  periodStarts: Date;
-  periodEnds: Date;
+  periodStart: Date;
+  periodEnd: Date;
 }) => {
   const { total: income } = await getBalances(
-    'INCOME',
-    periodStarts,
-    periodEnds
+    { type: 'INCOME' },
+    {
+      periodStart,
+      periodEnd,
+    }
   );
+
   const { total: expenses } = await getBalances(
-    'EXPENSES',
-    periodStarts,
-    periodEnds
+    { type: 'EXPENSES' },
+    {
+      periodStart,
+      periodEnd,
+    }
   );
+
   return Math.abs(income) - expenses;
-};
-
-export const getBalancesA = async (
-  accounttype: AccountType,
-  periodEnds: Date
-) => {
-  let total = 0;
-  const balances: BalanceType[] = [];
-  const result = await prisma.account.findMany({
-    where: {
-      type: accounttype,
-    },
-  });
-
-  for (const { name } of result) {
-    const balance = await getBalanceA(name, periodEnds);
-    total += balance;
-    balances.push({ name, balance });
-  }
-  return { total, balances };
-};
-
-const getBalanceA = async (name: string, periodEnds: Date) => {
-  const debitResult = await prisma.transaction.aggregate({
-    where: {
-      debit: {
-        name: name,
-      },
-      date: {
-        lte: periodEnds,
-      },
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-  const { amount: debitAmount } = debitResult._sum;
-
-  const creditResult = await prisma.transaction.aggregate({
-    where: {
-      credit: {
-        name: name,
-      },
-      date: {
-        lte: periodEnds,
-      },
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-  const { amount: creditAmount } = creditResult._sum;
-  return Number(debitAmount) - Number(creditAmount);
 };
