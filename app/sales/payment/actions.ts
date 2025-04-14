@@ -51,7 +51,8 @@ export const actionInvoicePayment = async (
   wht: number,
   formData: FormData
 ) => {
-  const { date, description, amount } = Object.fromEntries(formData);
+  const { date, description, amount, vatIncluded } =
+    Object.fromEntries(formData);
 
   const amountNumber = convertStringToNumber(amount as string);
   if (amountNumber == null) return 'Amount is not a valid number';
@@ -59,13 +60,18 @@ export const actionInvoicePayment = async (
   const dateObj = convertStringToDate(date as string);
   if (dateObj == null) return 'You entered an invalid date string';
 
-  const debitId = (await getAccount('Standard Bank')).id;
-  const creditId = (await getAccount('Receivables')).id;
+  const debitId = (await getAccount({ name: 'Standard Bank' })).id;
+  const creditId = (await getAccount({ name: 'Receivables' })).id;
 
   let whtAmount = 0;
   if (wht > 0) {
-    whtAmount = amountNumber * wht;
-    whtAmount = Number(whtAmount.toFixed(2));
+    if (vatIncluded) {
+      const netAmount = Number((amountNumber / 1.165).toFixed(2));
+      whtAmount = netAmount * wht;
+    } else {
+      whtAmount = amountNumber * wht;
+      whtAmount = Number(whtAmount.toFixed(2));
+    }
   }
   let data = {
     date: dateObj,
@@ -73,18 +79,6 @@ export const actionInvoicePayment = async (
     debitId,
     creditId,
     description: `${description as string} payment`,
-    invoiceId: invoiceId,
-  };
-  await transaction(data);
-  if (wht == 0) return 'Payment processed';
-
-  const whtAccountId = (await getAccount('WHT Deducted')).id;
-  data = {
-    date: dateObj,
-    amount: whtAmount,
-    debitId: whtAccountId,
-    creditId,
-    description: `${description as string} payment (WHT deducted)`,
     invoiceId: invoiceId,
   };
   await transaction(data);
@@ -96,6 +90,19 @@ export const actionInvoicePayment = async (
       payed: true,
     },
   });
+  if (wht == 0) return 'Payment processed';
+
+  const whtAccountId = (await getAccount({ name: 'WHT Deducted' })).id;
+  data = {
+    date: dateObj,
+    amount: whtAmount,
+    debitId: whtAccountId,
+    creditId,
+    description: `${description as string} payment (WHT deducted)`,
+    invoiceId: invoiceId,
+  };
+  await transaction(data);
+
   redirect('/sales/payment');
   return 'Payment processed';
 };

@@ -1,4 +1,4 @@
-import { getBalances } from '@/actions';
+import { getBalances, getTaxObligation } from '@/actions';
 
 export const getRetainedEarning = async ({
   periodStart,
@@ -23,5 +23,7 @@ export const getRetainedEarning = async ({
     }
   );
 
-  return Math.abs(income) - expenses;
+  const profit = Math.abs(income) - expenses;
+  const taxObligation = await getTaxObligation();
+  return profit - taxObligation;
 };

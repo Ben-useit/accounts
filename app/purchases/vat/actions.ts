@@ -29,13 +29,14 @@ export const actionVatPurchase = async (
   await transaction(data);
 
   if (vatNumber == 0) return 'Purchase booked';
-  const vatAccountId = await getAccount('VAT');
+  const vatAccountId = await getAccount({ name: 'VAT' });
+  const note = description as string;
   data = {
     date: dateObj,
     amount: vatNumber,
     debitId: vatAccountId.id,
     creditId: expensesId,
-    description: description as string,
+    description: `${note} VAT`,
   };
   await transaction(data);
   return 'VAT purchase booked';

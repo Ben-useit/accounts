@@ -33,13 +33,14 @@ export const actionNewInvoice = async (
   // Need two accounts: Receivable debit, Income or Reimbursement is credit
   // If openingBalance is checked use this instead
   let creditId: number;
-  if (openingBalance) creditId = (await getAccount('Opening Balance')).id;
+  if (openingBalance)
+    creditId = (await getAccount({ name: 'Opening Balance' })).id;
   else {
     creditId = reimbursement
-      ? (await getAccount('Reimbursement')).id
-      : (await getAccount('Consulting')).id;
+      ? (await getAccount({ name: 'Reimbursement' })).id
+      : (await getAccount({ name: 'Consulting' })).id;
   }
-  const debitId = (await getAccount('Receivables')).id;
+  const debitId = (await getAccount({ name: 'Receivables' })).id;
   let data = {
     date: dateObj,
     amount: amountNumber + vat,
@@ -51,7 +52,7 @@ export const actionNewInvoice = async (
   await transaction(data);
 
   if (openingBalance || vat == 0) return 'Invoice booked';
-  const vatId = (await getAccount('VAT')).id;
+  const vatId = (await getAccount({ name: 'VAT' })).id;
 
   data = {
     date: dateObj,

@@ -3,15 +3,17 @@
 import { convertNumberToString } from '@/utils/convert';
 import { redirect } from 'next/navigation';
 
-function ClientList({
-  clients,
+function List({
+  items,
   totalBalance,
+  redirectURL,
 }: {
-  clients: { id: number; name: string; balance: number }[];
+  items: { id: number; name: string; balance: number }[];
   totalBalance: number;
+  redirectURL: string;
 }) {
-  const handleClick = (clientId: number) => {
-    redirect(`/client/${clientId}`);
+  const handleClick = (itemId: number) => {
+    redirect(`${redirectURL}/${itemId}`);
   };
   return (
     <>
@@ -20,20 +22,20 @@ function ClientList({
         <div className=' p-2 text-right font-semibold'>Balance</div>
         <div></div>
       </div>
-      {clients.map((client) => {
+      {items.map((item) => {
         return (
           <div
-            key={client.id}
+            key={item.id}
             className='grid grid-cols-[10fr_3fr_1fr] gap-2 border-b mb-2 pt-2 pb-4'
           >
-            <div className='p-2'>{client.name}</div>
+            <div className='p-2'>{item.name}</div>
             <div className='p-2 text-right'>
-              {convertNumberToString(client.balance)}
+              {convertNumberToString(item.balance)}
             </div>
             <button
               //className='bg-indigo-600 text-white flex border p-2 rounded-md text-right justify-end'
               className='rounded-md bg-indigo-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-              onClick={() => handleClick(client.id)}
+              onClick={() => handleClick(item.id)}
             >
               Details
             </button>
@@ -50,4 +52,4 @@ function ClientList({
     </>
   );
 }
-export default ClientList;
+export default List;

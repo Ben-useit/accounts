@@ -1,6 +1,6 @@
 import { getClients } from '@/prisma/queries';
-import ClientList from './component';
 import { getBalance } from '@/prisma/queries';
+import List from '@/components/List';
 
 const ListClient = async () => {
   const clients = await getClients();
@@ -14,7 +14,11 @@ const ListClient = async () => {
 
   return (
     <div className='lg:w-3/4'>
-      <ClientList clients={clientList} totalBalance={totalBalance} />
+      <List
+        items={clientList}
+        totalBalance={totalBalance}
+        redirectURL='/client'
+      />
     </div>
   );
 };

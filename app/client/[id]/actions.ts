@@ -40,6 +40,8 @@ export const getInvoices = async (clientId: number): Promise<InvoiceType[]> => {
       date: null,
       amount: 0,
     };
+    if (transactions.length === 0) continue;
+
     const { date, amount } = transactions[0];
     if (invoice?.payed) {
       if (transactions.length > 2) {

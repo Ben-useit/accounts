@@ -7,6 +7,7 @@ import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
 import { useActionState, useState, useRef } from 'react';
 import { actionInvoicePayment, getInvoiceDetails } from './actions';
+import CheckboxField from '@/components/CheckboxField';
 
 const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
   const [errorMessage, setErrorMessage] = useState('');
@@ -79,6 +80,9 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
               placeholder=''
               initial={amount}
             />
+          </div>
+          <div className='col-start-4'>
+            <CheckboxField label='already includes VAT' name='vatIncluded' />
           </div>
           <div className='col-start-4'>
             <NumberInputField
