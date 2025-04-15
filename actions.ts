@@ -15,7 +15,7 @@ export const periodSelectAction = async ({
   setPeriod({ dateFrom, dateTo });
 };
 
-type BalanceType = {
+export type BalanceType = {
   name: string;
   balance: number;
 };

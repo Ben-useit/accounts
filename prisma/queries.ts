@@ -1,3 +1,4 @@
+import { convertStringToDate } from '@/utils/convert';
 import prisma from '@/utils/db';
 
 export const getPeriod = async () => {
@@ -12,6 +13,21 @@ export const getPeriod = async () => {
     throw new Error('Configuration Error: Set Period.');
 
   return { periodStart: periodStart.value, periodEnd: periodEnd.value };
+};
+
+export const getPeriodAsDate = async () => {
+  const periodStart = await prisma.setting.findFirst({
+    where: { name: 'periodStart' },
+  });
+  const periodEnd = await prisma.setting.findFirst({
+    where: { name: 'periodEnd' },
+  });
+
+  if (!periodStart || !periodEnd)
+    throw new Error('Configuration Error: Set Period.');
+  const periodStartDate = convertStringToDate(periodStart.value) as Date;
+  const periodEndDate = convertStringToDate(periodEnd.value) as Date;
+  return { periodStart: periodStartDate, periodEnd: periodEndDate };
 };
 
 export const setPeriod = async ({

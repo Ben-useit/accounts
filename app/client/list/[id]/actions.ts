@@ -59,5 +59,10 @@ export const getInvoices = async (clientId: number): Promise<InvoiceType[]> => {
       data: { issued: { date, amount: Number(amount) }, payed },
     });
   }
-  return result;
+  const sortedResult = result.sort((a, b) => {
+    const dateA = a.data.issued.date;
+    const dateB = b.data.issued.date;
+    return dateA.getTime() - dateB.getTime();
+  });
+  return sortedResult;
 };

@@ -87,10 +87,6 @@ model Transaction {
   credit   Account @relation(name: "credit", fields: [creditId], references: [id])
   creditId Int 
   description String? 
-  //detail TransactionDetail @relation(fields: [detailId], references: [id])
-  //detailId Int 
-  // client Client? @relation(fields:[clientId], references: [id])
-  // clientId Int?
   invoice Invoice? @relation(fields:[invoiceId], references: [id])
   invoiceId Int?
 }
