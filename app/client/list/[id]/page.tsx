@@ -1,5 +1,7 @@
 'use server';
-import { getClient, getBalance } from '@/prisma/queries';
+import { getClient } from '@/prisma/queries';
+import { getInvoiceBalance } from '../actions';
+
 import { getInvoices } from './actions';
 import InvoicesList from './component';
 
@@ -17,7 +19,7 @@ const ClientDetails = async ({
         <div className='text-2xl mb-4'>No innvoices for {client?.name}</div>
       </div>
     );
-  const balance = await getBalance(id);
+  const balance = await getInvoiceBalance(id);
 
   return (
     <>

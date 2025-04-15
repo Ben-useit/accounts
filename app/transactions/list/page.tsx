@@ -1,6 +1,6 @@
 import List from '@/components/List';
 import { getAccounts } from '@/prisma/queries';
-import { getBalance } from '@/prisma/queries';
+import { getBalance } from './actions';
 
 const ListTransactions = async () => {
   const accounts = await getAccounts();

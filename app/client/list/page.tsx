@@ -1,5 +1,5 @@
 import { getClients } from '@/prisma/queries';
-import { getBalance } from '@/prisma/queries';
+import { getInvoiceBalance } from './actions';
 import List from '@/components/List';
 
 const ListClient = async () => {
@@ -7,7 +7,7 @@ const ListClient = async () => {
   const clientList: { id: number; name: string; balance: number }[] = [];
   let totalBalance = 0;
   for (const { id, name } of clients) {
-    const balance = await getBalance(id);
+    const balance = await getInvoiceBalance(id);
     totalBalance += balance;
     clientList.push({ id, name, balance });
   }
@@ -17,7 +17,7 @@ const ListClient = async () => {
       <List
         items={clientList}
         totalBalance={totalBalance}
-        redirectURL='/client'
+        redirectURL='/client/list'
       />
     </div>
   );
