@@ -1,6 +1,6 @@
 'use server';
 
-import { getAccount, transaction } from '@/prisma/queries';
+import { getAccount, createTransaction } from '@/prisma/queries';
 import { convertStringToDate, convertStringToNumber } from '@/utils/convert';
 
 export const actionVatPurchase = async (
@@ -26,7 +26,7 @@ export const actionVatPurchase = async (
     creditId,
     description: description as string,
   };
-  await transaction(data);
+  await createTransaction(data);
 
   if (vatNumber == 0) return 'Purchase booked';
   const vatAccountId = await getAccount({ name: 'VAT' });
@@ -38,6 +38,6 @@ export const actionVatPurchase = async (
     creditId: expensesId,
     description: `${note} VAT`,
   };
-  await transaction(data);
+  await createTransaction(data);
   return 'VAT purchase booked';
 };

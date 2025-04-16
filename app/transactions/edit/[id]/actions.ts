@@ -1,15 +1,20 @@
 'use server';
-
-import { createTransaction } from '@/prisma/queries';
+import { createTransaction, updateTransaction } from '@/prisma/queries';
 import { convertStringToDate, convertStringToNumber } from '@/utils/convert';
+import prisma from '@/utils/db';
 
-export const actionWithdrawal = async (
+export const getTransaction = async (id: number) => {
+  const result = await prisma.transaction.findFirst({ where: { id: id } });
+  return result;
+};
+
+export const actionTransaction = async (
+  id: number,
   expensesId: number,
   creditId: number,
   formData: FormData
 ) => {
-  const { date, description, amount } = Object.fromEntries(formData);
-
+  const { date, description, amount, noUpdate } = Object.fromEntries(formData);
   const amountNumber = convertStringToNumber(amount as string);
   if (amountNumber == null) return 'Amount is not a valid number';
 
@@ -22,7 +27,9 @@ export const actionWithdrawal = async (
     creditId,
     description: description as string,
   };
-  await createTransaction(data);
 
-  return 'Withdrawal booked';
+  if (noUpdate) await createTransaction(data);
+  else await updateTransaction(id, data);
+
+  return 'Transaction processed';
 };

@@ -1,6 +1,6 @@
 'use server';
 
-import { transaction } from '@/prisma/queries';
+import { createTransaction } from '@/prisma/queries';
 import { convertStringToDate, convertStringToNumber } from '@/utils/convert';
 
 export const actionTransaction = async (
@@ -22,7 +22,7 @@ export const actionTransaction = async (
     creditId,
     description: description as string,
   };
-  await transaction(data);
+  await createTransaction(data);
 
   return 'Transaction processed';
 };

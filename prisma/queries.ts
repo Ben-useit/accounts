@@ -121,8 +121,18 @@ type InvoiceType = {
   clientId: number;
 };
 
-export const transaction = async (data: TransactionType) => {
+export const createTransaction = async (data: TransactionType) => {
   const result = await prisma.transaction.create({ data: data });
+  return result;
+};
+
+export const updateTransaction = async (id: number, data: TransactionType) => {
+  const result = await prisma.transaction.update({
+    where: {
+      id: id,
+    },
+    data: data,
+  });
   return result;
 };
 

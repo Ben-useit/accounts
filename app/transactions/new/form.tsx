@@ -1,7 +1,7 @@
 'use client';
 
 import ButtonPanel from '@/components/ButtonPanel';
-import DateInputField from '@/components/DateInputField';
+import { DateInputField } from '@/components/DateComponent';
 import NumberInputField from '@/components/NumberInputField';
 import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
@@ -18,6 +18,7 @@ const Form = ({
   const [expensesId, setExpensesId] = useState(1);
   const [creditId, setCreditId] = useState(1);
   const formRef = useRef<HTMLFormElement>(null);
+  const [invalid, setInvalid] = useState(false);
   const action = async (prevState: string | null, formdata: FormData) => {
     const actionResult = await actionTransaction(
       expensesId,
@@ -41,11 +42,7 @@ const Form = ({
 
           {/* </div>
         <div className='mt-2 grid grid-cols-4  gap-4'> */}
-          <DateInputField
-            label='Date'
-            name='date'
-            placeholder='Enter date dd/mm/yyyy'
-          />
+          <DateInputField label='Date' name='date' setInvalid={setInvalid} />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div className='col-span-3'>
@@ -84,6 +81,7 @@ const Form = ({
             cancelButton={true}
             cancelAction={cancelAction}
             label='Submit'
+            invalid={invalid}
           />
         </div>
       </form>

@@ -6,20 +6,46 @@ import NumberInputField from '@/components/NumberInputField';
 import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
 import { useActionState, useState, useRef } from 'react';
-import { actionVatPurchase } from './actions';
+import { convertDateToString, convertNumberToString } from '@/utils/convert';
+import { actionTransaction } from './actions';
+import CheckboxField from '@/components/CheckboxField';
+
+type TransactionType = {
+  id: number;
+  date: Date;
+  amount: number;
+  debitId: number;
+  creditId: number;
+  description: string | null;
+  invoiceId: number | null;
+};
 
 const Form = ({
+  transaction,
   expensesAccounts,
   creditAccounts,
 }: {
+  transaction: TransactionType;
   expensesAccounts: { id: number; name: string }[];
   creditAccounts: { id: number; name: string }[];
 }) => {
-  const [expensesId, setExpensesId] = useState(1);
-  const [creditId, setCreditId] = useState(1);
+  // Need to set the correct value here
+  const debitSelId = expensesAccounts.findIndex(
+    ({ id }) => id === transaction.debitId
+  );
+  const creditSelId = expensesAccounts.findIndex(
+    ({ id }) => id === transaction.creditId
+  );
+  const [expensesId, setExpensesId] = useState(debitSelId + 1);
+  const [creditId, setCreditId] = useState(creditSelId + 1);
+  const [invalid, setInvalid] = useState(false);
+
   const formRef = useRef<HTMLFormElement>(null);
+  const { id, date, description, amount } = transaction;
+
   const action = async (prevState: string | null, formdata: FormData) => {
-    const actionResult = await actionVatPurchase(
+    const actionResult = await actionTransaction(
+      id,
       expensesId,
       creditId,
       formdata
@@ -29,8 +55,8 @@ const Form = ({
   const cancelAction = () => {
     formRef.current?.reset();
   };
+
   const [message, formAction] = useActionState(action, null);
-  const [invalid, setInvalid] = useState(false);
   return (
     <>
       {message && <div className='text-xl'>{message}</div>}
@@ -38,11 +64,14 @@ const Form = ({
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div></div>
           <div></div>
-          <div> </div>
+          <div></div>
 
-          {/* </div>
-        <div className='mt-2 grid grid-cols-4  gap-4'> */}
-          <DateInputField label='Date' name='date' setInvalid={setInvalid} />
+          <DateInputField
+            label='Date'
+            name='date'
+            initialValue={convertDateToString(date)}
+            setInvalid={setInvalid}
+          />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div className='col-span-3'>
@@ -50,17 +79,17 @@ const Form = ({
               label='Description'
               name='description'
               placeholder=''
+              initial={description || ''}
             />
           </div>
           <div className='col-start-4'>
-            <NumberInputField label='Amount' name='amount' placeholder='' />
+            <NumberInputField
+              label='Amount'
+              name='amount'
+              placeholder=''
+              initial={convertNumberToString(amount)}
+            />
           </div>
-        </div>
-        <div className='mt-2 grid grid-cols-4  gap-4'>
-          <div></div>
-          <div></div>
-          <div> </div>
-          <NumberInputField label='Input VAT' name='vat' placeholder='' />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div></div>
@@ -80,6 +109,13 @@ const Form = ({
             onSelect={setCreditId}
           />
         </div>
+
+        <div className='mt-2 grid grid-cols-4  gap-4'>
+          <div className='col-start-4'>
+            <CheckboxField label='Create new' name='noUpdate' />
+          </div>
+        </div>
+
         <div className='border-b mt-6 border-gray-300'></div>
         <div className='mt-2'>
           <ButtonPanel

@@ -1,6 +1,6 @@
 'use server';
 
-import { getAccount, transaction, createInvoice } from '@/prisma/queries';
+import { getAccount, createTransaction, createInvoice } from '@/prisma/queries';
 import { convertStringToDate, convertStringToNumber } from '@/utils/convert';
 
 export const actionNewInvoice = async (
@@ -49,7 +49,7 @@ export const actionNewInvoice = async (
     description: description as string,
     invoiceId: invoice.id,
   };
-  await transaction(data);
+  await createTransaction(data);
 
   if (openingBalance || vat == 0) return 'Invoice booked';
   const vatId = (await getAccount({ name: 'VAT' })).id;
@@ -62,7 +62,7 @@ export const actionNewInvoice = async (
     description: `${description as string} VAT`,
     invoiceId: invoice.id,
   };
-  await transaction(data);
+  await createTransaction(data);
 
   return 'Invoice booked';
 };

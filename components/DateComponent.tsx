@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-const PeriodSelector = ({
+export const PeriodSelector = ({
   initialFrom,
   initialTo,
   action,
@@ -47,9 +47,8 @@ const PeriodSelector = ({
     </form>
   );
 };
-export default PeriodSelector;
 
-const DateInputField = ({
+export const DateInputField = ({
   label,
   name,
   initialValue,

@@ -1,7 +1,7 @@
 'use server';
 import prisma from '@/utils/db';
 
-import { getAccount, transaction } from '@/prisma/queries';
+import { getAccount, createTransaction } from '@/prisma/queries';
 import {
   convertDateToString,
   convertNumberToString,
@@ -81,7 +81,7 @@ export const actionInvoicePayment = async (
     description: `${description as string} payment`,
     invoiceId: invoiceId,
   };
-  await transaction(data);
+  await createTransaction(data);
   await prisma.invoice.update({
     where: {
       id: invoiceId,
@@ -101,7 +101,7 @@ export const actionInvoicePayment = async (
     description: `${description as string} payment (WHT deducted)`,
     invoiceId: invoiceId,
   };
-  await transaction(data);
+  await createTransaction(data);
 
   redirect('/sales/payment');
   return 'Payment processed';

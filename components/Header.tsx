@@ -5,7 +5,7 @@ import MakeSidebar from './Sidebar';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/logoipsum-298.svg';
-import PeriodSelector from './PeriodSelector';
+import { PeriodSelector } from './DateComponent';
 import { periodSelectAction } from '@/actions';
 
 const Header = ({
@@ -47,7 +47,6 @@ const Header = ({
         <div className='pl-2 pt-0.5 text-2xl hidden sm:inline'>EasyCash</div>
       </div>
       <PeriodSelector
-        //formAction={() => periodSelectAction}
         initialFrom={initialFrom}
         initialTo={initialTo}
         action={periodSelectAction}

@@ -1,7 +1,7 @@
 'use client';
 
 import ButtonPanel from '@/components/ButtonPanel';
-import DateInputField from '@/components/DateInputField';
+import { DateInputField } from '@/components/DateComponent';
 import NumberInputField from '@/components/NumberInputField';
 import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
@@ -38,6 +38,7 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
     formRef.current?.reset();
   };
   const [message, formAction] = useActionState(action, null);
+  const [invalid, setInvalid] = useState(false);
   return (
     <>
       <div className='text-2xl'>Invoice Payment</div>
@@ -57,12 +58,7 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
 
           {/* </div>
         <div className='mt-2 grid grid-cols-4  gap-4'> */}
-          <DateInputField
-            label='Date'
-            name='date'
-            placeholder='Enter date dd/mm/yyyy'
-            initial={''}
-          />
+          <DateInputField label='Date' name='date' setInvalid={setInvalid} />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div className='col-span-3'>
@@ -116,6 +112,7 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
             cancelButton={true}
             cancelAction={cancelAction}
             label='Submit'
+            invalid={invalid}
           />
         </div>
       </form>

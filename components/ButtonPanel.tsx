@@ -1,12 +1,25 @@
+'use client';
+import { useEffect, useState } from 'react';
 const ButtonPanel = ({
   cancelButton = false,
   cancelAction,
   label,
-}: {
+  invalid = false,
+}: //setInvalid
+{
   cancelButton?: boolean;
   cancelAction?: () => void;
   label: string;
+  //setInvalid: (arg: boolean) => void;
+  invalid?: boolean;
 }) => {
+  const [isInvalid, setIsInvalid] = useState(!invalid);
+  useEffect(() => {
+    setIsInvalid(!isInvalid);
+  }, [invalid]);
+  const submitButtonStyle =
+    'rounded-md  px-3 py-2 text-sm  text-white shadow-xs  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600';
+
   return (
     <div className='grid grid-cols-[70px_70px] mt-6 gap-x-8 justify-end'>
       {cancelButton ? (
@@ -23,7 +36,13 @@ const ButtonPanel = ({
 
       <button
         type='submit'
-        className='rounded-md bg-indigo-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+        disabled={isInvalid}
+        className={
+          isInvalid
+            ? `${submitButtonStyle} bg-gray-300`
+            : `${submitButtonStyle} bg-indigo-600 hover:bg-indigo-500`
+        }
+        //className='rounded-md bg-indigo-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
       >
         {label}
       </button>

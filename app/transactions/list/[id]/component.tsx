@@ -1,3 +1,5 @@
+'use client';
+import { redirect } from 'next/navigation';
 import { type TransactionListType } from './actions';
 import { convertDateToString, convertNumberToString } from '@/utils/convert';
 const TransactionList = ({
@@ -5,6 +7,9 @@ const TransactionList = ({
 }: {
   transactions: TransactionListType[];
 }) => {
+  const handleEdit = (id: number) => {
+    redirect(`/transactions/edit/${id}`);
+  };
   return (
     <>
       <div className='grid grid-cols-[2fr_8fr_2fr_2fr_2fr_1fr] gap-4 border-b pt-2 pb-2 mb-2 font-semibold'>
@@ -36,8 +41,11 @@ const TransactionList = ({
             <div className='content-center text-right'>
               {convertNumberToString(totalAmount)}
             </div>
-            <button className='rounded-md bg-indigo-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
-              Details
+            <button
+              onClick={() => handleEdit(id)}
+              className='rounded-md bg-indigo-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+            >
+              Edit
             </button>
           </div>
         );
