@@ -80,7 +80,15 @@ export const getClients = async (all = false) => {
 
 export const getAccounts = async () => {
   const result = await prisma.account.findMany({
-    select: { id: true, name: true },
+    select: { id: true, name: true, type: true },
+    orderBy: [
+      {
+        type: 'asc',
+      },
+      {
+        position: 'asc',
+      },
+    ],
   });
   return result;
 };

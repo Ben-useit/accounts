@@ -1,6 +1,9 @@
 import prisma from '@/utils/db';
+import { AccountType } from '@prisma/client';
 
-export const getBalance = async (accountId: number) => {
+export const getBalance = async (accountId: number, type: AccountType) => {
+  const reverse =
+    type === 'EQUITY' || type === 'LIABILITIES' || type === 'INCOME';
   const debitAmount = await prisma.transaction.aggregate({
     where: {
       debitId: accountId,
@@ -17,6 +20,8 @@ export const getBalance = async (accountId: number) => {
       amount: true,
     },
   });
-  //const amount = Number(debitAmount._sum.amount) || 0;
+  if (reverse)
+    return Number(creditAmount._sum.amount) - Number(debitAmount._sum.amount);
+
   return Number(debitAmount._sum.amount) - Number(creditAmount._sum.amount);
 };

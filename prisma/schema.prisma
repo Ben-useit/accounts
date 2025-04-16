@@ -43,6 +43,7 @@ model Group {
 
 model Account {
   id   Int  @id @default(autoincrement())
+  position Int @default(100)
   name String
   type AccountType
   description String?

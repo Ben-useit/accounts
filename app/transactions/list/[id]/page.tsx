@@ -8,8 +8,8 @@ const AccountDetail = async ({
   params: Promise<{ id: string }>;
 }) => {
   const id = Number((await params).id);
-  const { name } = await getAccount({ id });
-  const transactions = await getTransactions(id);
+  const { name, type } = await getAccount({ id });
+  const transactions = await getTransactions(id, type);
   if (transactions.length === 0)
     return (
       <div className='lg:w-3/4'>

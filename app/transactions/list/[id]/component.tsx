@@ -34,7 +34,7 @@ const TransactionList = ({
               {credit > 0 && convertNumberToString(credit)}
             </div>
             <div className='content-center text-right'>
-              {totalAmount > 0 && convertNumberToString(totalAmount)}
+              {convertNumberToString(totalAmount)}
             </div>
             <button className='rounded-md bg-indigo-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
               Details

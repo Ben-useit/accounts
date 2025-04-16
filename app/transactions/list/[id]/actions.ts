@@ -1,4 +1,5 @@
 import prisma from '@/utils/db';
+import { AccountType } from '@prisma/client';
 /**
  * Returns all transactions for a given account.
  *
@@ -15,17 +16,24 @@ export type TransactionListType = {
 };
 
 export const getTransactions = async (
-  accountId: number
+  accountId: number,
+  type: AccountType
 ): Promise<TransactionListType[]> => {
   const transactions = await prisma.transaction.findMany({
     where: { OR: [{ creditId: accountId }, { debitId: accountId }] },
     orderBy: { date: 'asc' },
   });
+  const reverse =
+    type === 'EQUITY' || type === 'LIABILITIES' || type === 'INCOME';
+
   const transactionsList = [];
   let totalAmount = 0;
   for (const { id, date, description, amount, debitId } of transactions) {
     if (debitId === accountId) {
-      totalAmount += Number(amount);
+      totalAmount = reverse
+        ? totalAmount - Number(amount)
+        : totalAmount + Number(amount);
+
       transactionsList.push({
         id,
         date,
@@ -35,7 +43,9 @@ export const getTransactions = async (
         totalAmount,
       });
     } else {
-      totalAmount -= Number(amount);
+      totalAmount = reverse
+        ? totalAmount + Number(amount)
+        : totalAmount - Number(amount);
       transactionsList.push({
         id,
         date,
