@@ -5,6 +5,8 @@ const ButtonPanel = ({
   cancelAction,
   label,
   invalid = false,
+  btnColor = 'indigo',
+  onClick,
 }: //setInvalid
 {
   cancelButton?: boolean;
@@ -12,6 +14,8 @@ const ButtonPanel = ({
   label: string;
   //setInvalid: (arg: boolean) => void;
   invalid?: boolean;
+  btnColor?: string;
+  onClick?: () => void;
 }) => {
   const [isInvalid, setIsInvalid] = useState(!invalid);
   useEffect(() => {
@@ -37,10 +41,11 @@ const ButtonPanel = ({
       <button
         type='submit'
         disabled={isInvalid}
+        onClick={onClick}
         className={
           isInvalid
             ? `${submitButtonStyle} bg-gray-300`
-            : `${submitButtonStyle} bg-indigo-600 hover:bg-indigo-500`
+            : `${submitButtonStyle} bg-${btnColor}-600 hover:bg-${btnColor}-500`
         }
         //className='rounded-md bg-indigo-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
       >

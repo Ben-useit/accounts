@@ -2,6 +2,7 @@
 import { redirect } from 'next/navigation';
 import { type TransactionListType } from './actions';
 import { convertDateToString, convertNumberToString } from '@/utils/convert';
+import { TrashIcon } from '@heroicons/react/24/outline';
 const TransactionList = ({
   transactions,
 }: {
@@ -10,9 +11,12 @@ const TransactionList = ({
   const handleEdit = (id: number) => {
     redirect(`/transactions/edit/${id}`);
   };
+  const handleDelete = (id: number) => {
+    redirect(`/transactions/delete/${id}`);
+  };
   return (
     <>
-      <div className='grid grid-cols-[2fr_8fr_2fr_2fr_2fr_1fr] gap-4 border-b pt-2 pb-2 mb-2 font-semibold'>
+      <div className='grid grid-cols-[2fr_8fr_2fr_2fr_2fr_1fr_1fr] gap-4 border-b pt-2 pb-2 mb-2 font-semibold'>
         <div className='text-center '>Date</div>
         <div className='text-left '>Description</div>
         <div className='content-center text-right pr-3'>Debit</div>
@@ -25,7 +29,7 @@ const TransactionList = ({
 
         return (
           <div
-            className='grid grid-cols-[2fr_8fr_2fr_2fr_2fr_1fr] gap-4 border-b mb-2 pt-2 pb-4'
+            className='grid grid-cols-[2fr_8fr_2fr_2fr_2fr_1fr_1fr] gap-4 border-b mb-2 pt-2 pb-4'
             key={id}
           >
             <div className='content-center text-center '>
@@ -46,6 +50,12 @@ const TransactionList = ({
               className='rounded-md bg-indigo-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
             >
               Edit
+            </button>
+            <button
+              onClick={() => handleDelete(id)}
+              className='rounded-md bg-red-600 px-3 py-2 text-sm  text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+            >
+              <TrashIcon height={24} />
             </button>
           </div>
         );
