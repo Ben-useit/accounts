@@ -1,7 +1,7 @@
 'use client';
 
 import { convertNumberToString } from '@/utils/convert';
-import { redirect } from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
 
 function List({
   items,
@@ -14,7 +14,10 @@ function List({
   redirectURL: string;
   displayTotalBalance?: boolean;
 }) {
+  const pathName = usePathname();
+
   const handleClick = (itemId: number) => {
+    window.history.pushState(null, '', pathName);
     redirect(`${redirectURL}/${itemId}`);
   };
   return (

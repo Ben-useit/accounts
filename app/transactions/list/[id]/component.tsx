@@ -1,17 +1,21 @@
 'use client';
-import { redirect } from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
 import { type TransactionListType } from './actions';
 import { convertDateToString, convertNumberToString } from '@/utils/convert';
 import { TrashIcon } from '@heroicons/react/24/outline';
+
 const TransactionList = ({
   transactions,
 }: {
   transactions: TransactionListType[];
 }) => {
+  const pathName = usePathname();
   const handleEdit = (id: number) => {
+    window.history.pushState(null, '', pathName);
     redirect(`/transactions/edit/${id}`);
   };
   const handleDelete = (id: number) => {
+    window.history.pushState(null, '', pathName);
     redirect(`/transactions/delete/${id}`);
   };
   return (

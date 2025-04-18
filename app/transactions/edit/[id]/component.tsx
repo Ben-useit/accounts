@@ -42,7 +42,6 @@ const Form = ({
 
   const formRef = useRef<HTMLFormElement>(null);
   const { id, date, description, amount } = transaction;
-
   const action = async (prevState: string | null, formdata: FormData) => {
     const actionResult = await actionTransaction(
       id,
@@ -50,6 +49,7 @@ const Form = ({
       creditId,
       formdata
     );
+    window.history.back();
     return actionResult;
   };
   const cancelAction = () => {
