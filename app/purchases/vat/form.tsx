@@ -31,6 +31,7 @@ const Form = ({
   };
   const [message, formAction] = useActionState(action, null);
   const [invalid, setInvalid] = useState(false);
+  const [descInput, setDescInput] = useState('');
   return (
     <>
       {message && <div className='text-xl'>{message}</div>}
@@ -50,6 +51,8 @@ const Form = ({
               label='Description'
               name='description'
               placeholder=''
+              value={descInput}
+              onChange={(e) => setDescInput(e.target.value)}
             />
           </div>
           <div className='col-start-4'>

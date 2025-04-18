@@ -12,6 +12,7 @@ import CheckboxField from '@/components/CheckboxField';
 const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
   const [clientId, setClientId] = useState(1);
   const [vatVal, setVatVal] = useState(2);
+  const [descInput, setDescInput] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const action = async (prevState: string | null, formdata: FormData) => {
     const actionResult = await actionNewInvoice(clientId, vatVal, formdata);
@@ -48,6 +49,8 @@ const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
               label='Description'
               name='description'
               placeholder=''
+              value={descInput}
+              onChange={(e) => setDescInput(e.target.value)}
             />
           </div>
           <div className='col-start-4'>

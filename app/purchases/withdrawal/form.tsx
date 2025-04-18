@@ -5,8 +5,9 @@ import { DateInputField } from '@/components/DateComponent';
 import NumberInputField from '@/components/NumberInputField';
 import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
-import { useActionState, useState, useRef } from 'react';
+import { useActionState, useState } from 'react';
 import { actionWithdrawal } from './actions';
+import { toast } from 'react-toastify';
 
 const Form = ({
   expensesAccounts,
@@ -17,27 +18,33 @@ const Form = ({
 }) => {
   const [expensesId, setExpensesId] = useState(1);
   const [creditId, setCreditId] = useState(1);
-  const formRef = useRef<HTMLFormElement>(null);
+  const [descInput, setDescInput] = useState('');
   const action = async (prevState: string | null, formdata: FormData) => {
-    const actionResult = await actionWithdrawal(expensesId, creditId, formdata);
-    return actionResult;
+    const { error, message } = await actionWithdrawal(
+      expensesId,
+      creditId,
+      formdata
+    );
+    if (error) {
+      toast.error(message);
+    } else {
+      toast.success(message);
+    }
+    setDescInput('');
+    return '';
   };
   const cancelAction = () => {
-    formRef.current?.reset();
+    setDescInput('');
   };
   const [message, formAction] = useActionState(action, null);
   const [invalid, setInvalid] = useState(false);
   return (
     <>
-      {message && <div className='text-xl'>{message}</div>}
-      <form action={formAction} ref={formRef}>
+      <form action={formAction}>
         <div className='mt-2 grid grid-cols-4  gap-4'>
-          <div></div>
+          <div>{message && message}</div>
           <div></div>
           <div> </div>
-
-          {/* </div>
-        <div className='mt-2 grid grid-cols-4  gap-4'> */}
           <DateInputField label='Date' name='date' setInvalid={setInvalid} />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
@@ -46,6 +53,8 @@ const Form = ({
               label='Description'
               name='description'
               placeholder=''
+              value={descInput}
+              onChange={(e) => setDescInput(e.target.value)}
             />
           </div>
           <div className='col-start-4'>

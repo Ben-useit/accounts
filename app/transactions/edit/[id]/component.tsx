@@ -42,6 +42,7 @@ const Form = ({
 
   const formRef = useRef<HTMLFormElement>(null);
   const { id, date, description, amount } = transaction;
+  const [descInput, setDescInput] = useState(description);
   const action = async (prevState: string | null, formdata: FormData) => {
     const actionResult = await actionTransaction(
       id,
@@ -79,7 +80,8 @@ const Form = ({
               label='Description'
               name='description'
               placeholder=''
-              initial={description || ''}
+              value={descInput || ''}
+              onChange={(e) => setDescInput(e.target.value)}
             />
           </div>
           <div className='col-start-4'>

@@ -1,8 +1,11 @@
+'use client';
 import TextInputField from '@/components/TextInputField';
 import TextAreaField from '@/components/TextAreaField';
 import ButtonPanel from '@/components/ButtonPanel';
+import { useState } from 'react';
 
 const NewClientPage = () => {
+  const [clientInput, setClientInput] = useState('');
   return (
     <form>
       <div className='text-2xl'>Add a new client</div>
@@ -12,6 +15,8 @@ const NewClientPage = () => {
           label='Client Name'
           name='name'
           placeholder='Enter client name'
+          value={clientInput}
+          onChange={(e) => setClientInput(e.target.value)}
         />
       </div>
       <div className='mt-3'>

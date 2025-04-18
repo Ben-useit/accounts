@@ -11,7 +11,7 @@ export const convertNumberToString = (value: number): string => {
   return formattedNumber;
 };
 export const convertStringToNumber = (value: string) => {
-  let numericValue = value.replace(/[^\d.-]/g, '');
+  let numericValue = value.replace(/,/g, '');
   const number = Number(numericValue);
   return number.toString() === 'NaN' ? null : number;
 };

@@ -19,6 +19,7 @@ const Form = ({
   const [creditId, setCreditId] = useState(1);
   const formRef = useRef<HTMLFormElement>(null);
   const [invalid, setInvalid] = useState(false);
+  const [descInput, setDescInput] = useState('');
   const action = async (prevState: string | null, formdata: FormData) => {
     const actionResult = await actionTransaction(
       expensesId,
@@ -50,6 +51,8 @@ const Form = ({
               label='Description'
               name='description'
               placeholder=''
+              value={descInput}
+              onChange={(e) => setDescInput(e.target.value)}
             />
           </div>
           <div className='col-start-4'>

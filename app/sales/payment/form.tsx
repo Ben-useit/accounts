@@ -15,7 +15,8 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
   const [wht, setWht] = useState(3);
   const [amount, setAmount] = useState('');
   const [vat, setVat] = useState('');
-  const [description, setDescription] = useState('');
+  const [descInput, setDescInput] = useState('');
+  //const [description, setDescription] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleInvoiceSelect = async (invoiceId: number) => {
@@ -28,7 +29,7 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
     const { amount, vat, description } = result;
     setAmount(amount);
     setVat(vat);
-    setDescription(description);
+    setDescInput(description);
   };
   const action = async (prevState: string | null, formdata: FormData) => {
     const actionResult = await actionInvoicePayment(invoiceId, wht, formdata);
@@ -66,7 +67,8 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
               label='Description'
               name='description'
               placeholder=''
-              initial={description}
+              value={descInput}
+              onChange={(e) => setDescInput(e.target.value)}
             />
           </div>
           <div className='col-start-4'>

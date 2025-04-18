@@ -4,6 +4,7 @@ import MakeSidebar from '@/components/Sidebar';
 
 import Header from '@/components/Header';
 import { getPeriod } from '@/prisma/queries';
+import { ToastContainer } from 'react-toastify';
 
 export const metadata: Metadata = {
   title: 'EasyCash',
@@ -19,6 +20,7 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body>
+        <ToastContainer position='top-center' />
         <div className='grid grid-cols-[256px_1fr_1fr_1fr] gap-2 p-2 m-4'>
           <div className=' col-span-4'>
             <Header periodStart={periodStart} periodEnd={periodEnd} />
