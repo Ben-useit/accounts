@@ -4,6 +4,7 @@ import { getBalance } from './actions';
 
 const ListTransactions = async () => {
   const accounts = await getAccounts();
+
   const accountList: { id: number; name: string; balance: number }[] = [];
   let totalBalance = 0;
   for (const { id, name, type } of accounts) {

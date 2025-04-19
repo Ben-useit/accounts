@@ -9,6 +9,8 @@ import { useActionState, useState, useRef } from 'react';
 import { convertDateToString, convertNumberToString } from '@/utils/convert';
 import { actionTransaction } from './actions';
 import CheckboxField from '@/components/CheckboxField';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 type TransactionType = {
   id: number;
@@ -24,10 +26,12 @@ const Form = ({
   transaction,
   expensesAccounts,
   creditAccounts,
+  redirectTo,
 }: {
   transaction: TransactionType;
   expensesAccounts: { id: number; name: string }[];
   creditAccounts: { id: number; name: string }[];
+  redirectTo: string;
 }) => {
   // Need to set the correct value here
   const debitSelId = expensesAccounts.findIndex(
@@ -43,15 +47,23 @@ const Form = ({
   const formRef = useRef<HTMLFormElement>(null);
   const { id, date, description, amount } = transaction;
   const [descInput, setDescInput] = useState(description);
+  const [dateInput, setDateInput] = useState(convertDateToString(date));
+  const [amountInput, setAmountInput] = useState(convertNumberToString(amount));
+  const router = useRouter();
   const action = async (prevState: string | null, formdata: FormData) => {
-    const actionResult = await actionTransaction(
+    const { error, message } = await actionTransaction(
       id,
       expensesId,
       creditId,
       formdata
     );
-    window.history.back();
-    return actionResult;
+    if (error) toast.error(message);
+    else {
+      toast.success(message);
+      router.replace(redirectTo);
+    }
+
+    return '';
   };
   const cancelAction = () => {
     formRef.current?.reset();
@@ -70,8 +82,10 @@ const Form = ({
           <DateInputField
             label='Date'
             name='date'
-            initialValue={convertDateToString(date)}
             setInvalid={setInvalid}
+            value={dateInput}
+            setValue={setDateInput}
+            onChange={(e) => setDateInput(e.target.value)}
           />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
@@ -89,7 +103,10 @@ const Form = ({
               label='Amount'
               name='amount'
               placeholder=''
-              initial={convertNumberToString(amount)}
+              value={amountInput}
+              setValue={setAmountInput}
+              onChange={(e) => setAmountInput(e.target.value)}
+              setInvalid={setInvalid}
             />
           </div>
         </div>

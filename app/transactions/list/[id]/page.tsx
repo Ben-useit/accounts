@@ -8,7 +8,12 @@ const AccountDetail = async ({
   params: Promise<{ id: string }>;
 }) => {
   const id = Number((await params).id);
-  const { name, type } = await getAccount({ id });
+  const data = await getAccount({ id });
+  if (!data)
+    return (
+      <div className='lg:w-3/4'>{`Account with id ${id} does not exist.`}</div>
+    );
+  const { name, type } = data;
   const transactions = await getTransactions(id, type);
   if (transactions.length === 0)
     return (

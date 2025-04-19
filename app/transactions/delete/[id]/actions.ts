@@ -1,7 +1,6 @@
 'use server';
 import prisma from '@/utils/db';
 import { AccountType, Domain } from '@prisma/client';
-import { redirect } from 'next/navigation';
 
 /**
  * Returns a list of transactions related to the given transaction
@@ -9,7 +8,7 @@ import { redirect } from 'next/navigation';
  * @param id
  */
 
-export const actionDelete = async (props: ResultType, redirectTo = '/') => {
+export const actionDelete = async (props: ResultType) => {
   const { invoice, transactions } = props;
   transactions.forEach(async ({ id }) => {
     await prisma.transaction.delete({
@@ -21,7 +20,6 @@ export const actionDelete = async (props: ResultType, redirectTo = '/') => {
   if (invoice) {
     await prisma.invoice.delete({ where: { id: invoice.id } });
   }
-  redirect(redirectTo);
 };
 
 export type ResultType = {

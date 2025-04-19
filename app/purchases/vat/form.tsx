@@ -7,6 +7,8 @@ import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
 import { useActionState, useState, useRef } from 'react';
 import { actionVatPurchase } from './actions';
+import { convertDateToString } from '@/utils/convert';
+import { toast } from 'react-toastify';
 
 const Form = ({
   expensesAccounts,
@@ -17,14 +19,22 @@ const Form = ({
 }) => {
   const [expensesId, setExpensesId] = useState(1);
   const [creditId, setCreditId] = useState(1);
+  const [amountInput, setAmountInput] = useState('');
+  const [vatInput, setVatInput] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const action = async (prevState: string | null, formdata: FormData) => {
-    const actionResult = await actionVatPurchase(
+    const { error, message } = await actionVatPurchase(
       expensesId,
       creditId,
       formdata
     );
-    return actionResult;
+    if (error) toast.error(message);
+    else {
+      toast.success(message);
+      setDescInput('');
+      setAmountInput('');
+    }
+    return '';
   };
   const cancelAction = () => {
     formRef.current?.reset();
@@ -32,6 +42,7 @@ const Form = ({
   const [message, formAction] = useActionState(action, null);
   const [invalid, setInvalid] = useState(false);
   const [descInput, setDescInput] = useState('');
+  const [dateInput, setDateInput] = useState(convertDateToString(new Date()));
   return (
     <>
       {message && <div className='text-xl'>{message}</div>}
@@ -41,9 +52,14 @@ const Form = ({
           <div></div>
           <div> </div>
 
-          {/* </div>
-        <div className='mt-2 grid grid-cols-4  gap-4'> */}
-          <DateInputField label='Date' name='date' setInvalid={setInvalid} />
+          <DateInputField
+            label='Date'
+            name='date'
+            setInvalid={setInvalid}
+            value={dateInput}
+            setValue={setDateInput}
+            onChange={(e) => setDateInput(e.target.value)}
+          />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div className='col-span-3'>
@@ -56,14 +72,30 @@ const Form = ({
             />
           </div>
           <div className='col-start-4'>
-            <NumberInputField label='Amount' name='amount' placeholder='' />
+            <NumberInputField
+              label='Amount'
+              name='amount'
+              placeholder=''
+              value={amountInput}
+              setValue={setAmountInput}
+              onChange={(e) => setAmountInput(e.target.value)}
+              setInvalid={setInvalid}
+            />
           </div>
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div></div>
           <div></div>
           <div> </div>
-          <NumberInputField label='Input VAT' name='vat' placeholder='' />
+          <NumberInputField
+            label='Input VAT'
+            name='vat'
+            placeholder=''
+            value={vatInput}
+            setValue={setVatInput}
+            onChange={(e) => setVatInput(e.target.value)}
+            setInvalid={setInvalid}
+          />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div></div>

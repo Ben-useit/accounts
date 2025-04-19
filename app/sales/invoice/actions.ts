@@ -12,10 +12,12 @@ export const actionNewInvoice = async (
     Object.fromEntries(formData);
 
   const amountNumber = convertStringToNumber(amount as string);
-  if (amountNumber == null) return 'Amount is not a valid number';
+  if (amountNumber == null)
+    return { error: true, message: 'Amount is not a valid number' };
 
   const dateObj = convertStringToDate(date as string);
-  if (dateObj == null) return 'You entered an invalid date string';
+  if (dateObj == null)
+    return { error: true, message: 'You entered an invalid date string' };
 
   let vat = 0;
   if (vatVal != 0) {
@@ -32,15 +34,48 @@ export const actionNewInvoice = async (
 
   // Need two accounts: Receivable debit, Income or Reimbursement is credit
   // If openingBalance is checked use this instead
+  let account = await getAccount({ name: 'Receivables' });
+  if (!account)
+    return { error: true, message: 'Account <Receivables> does not exist.' };
+  const debitId = account.id;
+
   let creditId: number;
-  if (openingBalance)
-    creditId = (await getAccount({ name: 'Opening Balance' })).id;
-  else {
-    creditId = reimbursement
-      ? (await getAccount({ name: 'Reimbursement' })).id
-      : (await getAccount({ name: 'Consulting' })).id;
+  if (openingBalance) {
+    account = await getAccount({ name: 'Opening Balance' });
+    if (!account)
+      return {
+        error: true,
+        message: 'Account <Opening Balance> does not exist.',
+      };
+    creditId = account.id;
+  } else {
+    if (reimbursement) {
+      account = await getAccount({ name: 'Reimbursement' });
+      if (!account)
+        return {
+          error: true,
+          message: 'Account <Reimbursement> does not exist.',
+        };
+      creditId = account.id;
+    } else {
+      account = await getAccount({ name: 'Consulting' });
+      if (!account)
+        return {
+          error: true,
+          message: 'Account <Consulting> does not exist.',
+        };
+      creditId = account.id;
+    }
   }
-  const debitId = (await getAccount({ name: 'Receivables' })).id;
+
+  account = await getAccount({ name: 'VAT' });
+  if (!account)
+    return {
+      error: true,
+      message: 'Account <VAT> does not exist.',
+    };
+  const vatId = account.id;
+
   let data = {
     date: dateObj,
     amount: amountNumber + vat,
@@ -51,8 +86,8 @@ export const actionNewInvoice = async (
   };
   await createTransaction(data);
 
-  if (openingBalance || vat == 0) return 'Invoice booked';
-  const vatId = (await getAccount({ name: 'VAT' })).id;
+  if (openingBalance || vat == 0)
+    return { error: false, message: `Invoice ${description} proceeded` };
 
   data = {
     date: dateObj,
@@ -64,5 +99,5 @@ export const actionNewInvoice = async (
   };
   await createTransaction(data);
 
-  return 'Invoice booked';
+  return { error: false, message: `Invoice ${description} proceeded` };
 };

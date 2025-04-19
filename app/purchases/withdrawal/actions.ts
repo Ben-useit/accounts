@@ -13,10 +13,7 @@ export const actionWithdrawal = async (
   formData: FormData
 ) => {
   const { date, description, amount } = Object.fromEntries(formData);
-  console.log('in actions: amount:', amount);
-
   const amountNumber = convertStringToNumber(amount as string);
-  console.log('after convert:', amountNumber);
 
   if (amountNumber == null)
     return { error: true, message: 'Amount is not a valid number' };

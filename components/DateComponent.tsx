@@ -11,6 +11,8 @@ export const PeriodSelector = ({
   action: ({ dateFrom, dateTo }: { dateFrom: string; dateTo: string }) => void;
 }) => {
   const [invalid, setInvalid] = useState(false);
+  const [dateFromInput, setDateFromInput] = useState(initialFrom);
+  const [dateToInput, setDateToInput] = useState(initialTo);
   const formAction = async (formData: FormData) => {
     const data = Object.fromEntries(formData);
     const dateFrom = data.dateFrom as string;
@@ -24,13 +26,17 @@ export const PeriodSelector = ({
       <div className='grid grid-cols-3 gap-2'>
         <DateInputField
           name='dateFrom'
-          initialValue={initialFrom}
+          value={dateFromInput}
+          onChange={(e) => setDateFromInput(e.target.value)}
           setInvalid={setInvalid}
+          setValue={setDateFromInput}
         />
         <DateInputField
           name='dateTo'
-          initialValue={initialTo}
+          value={dateToInput}
+          onChange={(e) => setDateToInput(e.target.value)}
           setInvalid={setInvalid}
+          setValue={setDateToInput}
         />
         <button
           type='submit'
@@ -51,16 +57,18 @@ export const PeriodSelector = ({
 export const DateInputField = ({
   label,
   name,
-  initialValue,
+  value,
+  setValue,
+  onChange,
   setInvalid,
 }: {
   label?: string;
   name: string;
-  initialValue?: string;
+  value: string;
+  setValue: (v: string) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setInvalid: (arg: boolean) => void;
 }) => {
-  const iValue = validateString(initialValue || '');
-  const [value, setValue] = useState(iValue);
   const [outline, setOutline] = useState('outline-1 outline-gray-300');
 
   const onBlur = (e: { target: { value: string } }) => {
@@ -89,7 +97,7 @@ export const DateInputField = ({
           onChange={(e) => {
             setOutline('outline-1 outline-gray-300');
             setInvalid(false);
-            setValue(e.target.value);
+            onChange(e);
           }}
         />
       </div>

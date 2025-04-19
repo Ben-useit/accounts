@@ -11,13 +11,16 @@ export const actionVatPurchase = async (
   const { date, description, amount, vat } = Object.fromEntries(formData);
 
   const amountNumber = convertStringToNumber(amount as string);
-  if (amountNumber == null) return 'Amount is not a valid number';
+  if (amountNumber == null)
+    return { error: true, message: 'Amount is not a valid number' };
 
   const dateObj = convertStringToDate(date as string);
-  if (dateObj == null) return 'You entered an invalid date string';
+  if (dateObj == null)
+    return { error: true, message: 'You entered an invalid date string' };
 
   const vatNumber = convertStringToNumber(vat as string);
-  if (vatNumber == null) return 'VAT is not a valid number';
+  if (vatNumber == null)
+    return { error: true, message: 'VAT is not a valid number' };
 
   let data = {
     date: dateObj,
@@ -28,8 +31,11 @@ export const actionVatPurchase = async (
   };
   await createTransaction(data);
 
-  if (vatNumber == 0) return 'Purchase booked';
+  if (vatNumber == 0)
+    return { error: false, message: `Purchase ${description} proceeded` };
   const vatAccountId = await getAccount({ name: 'VAT' });
+  if (!vatAccountId)
+    return { error: true, message: 'VAT account does not exist.' };
   const note = description as string;
   data = {
     date: dateObj,
@@ -39,5 +45,5 @@ export const actionVatPurchase = async (
     description: `${note} VAT`,
   };
   await createTransaction(data);
-  return 'VAT purchase booked';
+  return { error: false, message: `VAT Purchase ${description} proceeded` };
 };

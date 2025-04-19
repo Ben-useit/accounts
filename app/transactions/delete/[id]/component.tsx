@@ -2,6 +2,8 @@
 import { convertDateToString, convertNumberToString } from '@/utils/convert';
 import ButtonPanel from '@/components/ButtonPanel';
 import { actionDelete, type ResultType } from './actions';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 const DeleteConfirm = ({
   id,
@@ -14,8 +16,12 @@ const DeleteConfirm = ({
 }) => {
   const { invoice, transactions, clientName } = props;
   const gridStyle = 'grid-cols-[1fr_4fr_2fr_2fr_1fr]';
-  const onClick = () => {
-    actionDelete(props, redirectTo);
+  const router = useRouter();
+
+  const onClick = async () => {
+    await actionDelete(props);
+    toast.success('Transaction deleted.');
+    router.replace(redirectTo);
   };
   return (
     <div className='lg:w-3/4'>

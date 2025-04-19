@@ -10,13 +10,12 @@ const TransactionList = ({
   transactions: TransactionListType[];
 }) => {
   const pathName = usePathname();
+
   const handleEdit = (id: number) => {
-    window.history.pushState(null, '', pathName);
-    redirect(`/transactions/edit/${id}`);
+    redirect(`/transactions/edit/${id}?redirectTo=${pathName}`);
   };
   const handleDelete = (id: number) => {
-    window.history.pushState(null, '', pathName);
-    redirect(`/transactions/delete/${id}`);
+    redirect(`/transactions/delete/${id}?redirectTo=${pathName}`);
   };
   return (
     <>

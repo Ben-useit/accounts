@@ -1,33 +1,38 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const NumberInputField = ({
   label,
   placeholder = '',
   name,
   type = 'text',
-  initial = '',
+  value,
+  setValue,
+  onChange,
+  setInvalid,
 }: {
   label: string;
   name: string;
   type?: string;
   placeholder?: string;
-  initial?: string;
+  value: string;
+  setValue: (v: string) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setInvalid: (arg: boolean) => void;
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [color, setColor] = useState('outline-1 outline-gray-300');
-  const [value, setValue] = useState<string>(initial);
-
-  useEffect(() => setValue(initial), [initial]);
   const validateInput = (e: { target: { value: string } }) => {
     const isNumber = validate(e.target.value);
     if (!isNumber) {
       setColor('outline-red-600 outline-2');
       setError('not a valid number');
+      setInvalid(true);
     } else {
       setColor('outline-1 outline-gray-300');
       setError(null);
+      setInvalid(false);
       const formattedNumber = formatString(e.target.value);
       setValue(formattedNumber);
     }
@@ -49,7 +54,10 @@ const NumberInputField = ({
             className={`w-full py-1.5 pr-3 pl-1 text-gray-900  placeholder:text-gray-400 focus:outline-none sm:text-sm/6`}
             placeholder={placeholder}
             onBlur={validateInput}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => {
+              onChange(e);
+              setInvalid(false);
+            }}
             value={value}
           />
         </div>

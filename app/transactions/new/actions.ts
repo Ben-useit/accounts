@@ -11,10 +11,12 @@ export const actionTransaction = async (
   const { date, description, amount } = Object.fromEntries(formData);
 
   const amountNumber = convertStringToNumber(amount as string);
-  if (amountNumber == null) return 'Amount is not a valid number';
+  if (amountNumber == null)
+    return { error: true, message: 'Amount is not a valid number' };
 
   const dateObj = convertStringToDate(date as string);
-  if (dateObj == null) return 'You entered an invalid date string';
+  if (dateObj == null)
+    return { error: true, message: 'You entered an invalid date string' };
   const data = {
     date: dateObj,
     amount: amountNumber,
@@ -24,5 +26,5 @@ export const actionTransaction = async (
   };
   await createTransaction(data);
 
-  return 'Transaction processed';
+  return { error: false, message: `Transaction ${description} proceeded` };
 };

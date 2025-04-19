@@ -103,7 +103,7 @@ export const getAccount = async ({
   const result = await prisma.account.findFirst({
     where: { id: id, name: name },
   });
-  if (!result) throw new Error(`Account ${name} does not exist`);
+  if (!result) null;
   return result;
 };
 

@@ -8,21 +8,36 @@ import TextInputField from '@/components/TextInputField';
 import { useActionState, useState, useRef } from 'react';
 import { actionNewInvoice } from './actions';
 import CheckboxField from '@/components/CheckboxField';
+import { toast } from 'react-toastify';
+import { convertDateToString } from '@/utils/convert';
 
 const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
   const [clientId, setClientId] = useState(1);
   const [vatVal, setVatVal] = useState(2);
   const [descInput, setDescInput] = useState('');
+  const [dateInput, setDateInput] = useState(convertDateToString(new Date()));
+  const [amountInput, setAmountInput] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const action = async (prevState: string | null, formdata: FormData) => {
-    const actionResult = await actionNewInvoice(clientId, vatVal, formdata);
-    return actionResult;
+    const { error, message } = await actionNewInvoice(
+      clientId,
+      vatVal,
+      formdata
+    );
+    if (error) toast.error(message);
+    else {
+      toast.success(message);
+      setDescInput('');
+      setAmountInput('');
+    }
+    return '';
   };
   const cancelAction = () => {
     formRef.current?.reset();
   };
   const [message, formAction] = useActionState(action, null);
   const [invalid, setInvalid] = useState(false);
+
   return (
     <>
       <div className='text-2xl'>New Invoice</div>
@@ -39,9 +54,14 @@ const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
             onSelect={setClientId}
           />
 
-          {/* </div>
-        <div className='mt-2 grid grid-cols-4  gap-4'> */}
-          <DateInputField label='Date' name='date' setInvalid={setInvalid} />
+          <DateInputField
+            label='Date'
+            name='date'
+            setInvalid={setInvalid}
+            value={dateInput}
+            setValue={setDateInput}
+            onChange={(e) => setDateInput(e.target.value)}
+          />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div className='col-span-3'>
@@ -54,7 +74,15 @@ const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
             />
           </div>
           <div className='col-start-4'>
-            <NumberInputField label='Amount' name='amount' placeholder='' />
+            <NumberInputField
+              label='Amount'
+              name='amount'
+              placeholder=''
+              value={amountInput}
+              setValue={setAmountInput}
+              onChange={(e) => setAmountInput(e.target.value)}
+              setInvalid={setInvalid}
+            />
           </div>
         </div>
         <div className='mt-6 grid grid-cols-5  gap-4'>

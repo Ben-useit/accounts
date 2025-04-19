@@ -4,10 +4,14 @@ import Form from './component';
 
 const EditTransaction = async ({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ redirectTo: string }>;
 }) => {
   const { id } = await params;
+  const redirectParams = await searchParams;
+  const redirectTo = redirectParams.redirectTo || '/';
   const result = await getTransaction(Number(id));
   const accounts = await getAccounts();
   if (!result) return <div>{`No transaction with ${id}`}</div>;
@@ -20,6 +24,7 @@ const EditTransaction = async ({
       transaction={transaction}
       expensesAccounts={accounts}
       creditAccounts={accounts}
+      redirectTo={redirectTo}
     />
   );
 };

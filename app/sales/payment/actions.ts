@@ -8,7 +8,6 @@ import {
   convertStringToDate,
   convertStringToNumber,
 } from '@/utils/convert';
-import { redirect } from 'next/navigation';
 
 export const getInvoiceDetails = async (invoicedId: number) => {
   let data = await prisma.transaction.findFirst({
@@ -55,13 +54,25 @@ export const actionInvoicePayment = async (
     Object.fromEntries(formData);
 
   const amountNumber = convertStringToNumber(amount as string);
-  if (amountNumber == null) return 'Amount is not a valid number';
+  if (amountNumber == null)
+    return { error: true, message: 'Amount is not a valid number' };
 
   const dateObj = convertStringToDate(date as string);
-  if (dateObj == null) return 'You entered an invalid date string';
+  if (dateObj == null)
+    return { error: true, message: 'You entered an invalid date string' };
 
-  const debitId = (await getAccount({ name: 'Standard Bank' })).id;
-  const creditId = (await getAccount({ name: 'Receivables' })).id;
+  let account = await getAccount({ name: 'Standard Bank' });
+  if (!account)
+    return { error: true, message: 'Account <Standard Bank> does not exist.' };
+  const debitId = account.id;
+  account = await getAccount({ name: 'Receivables' });
+  if (!account)
+    return { error: true, message: 'Account <Receivables> does not exist.' };
+  const creditId = account.id;
+  account = await getAccount({ name: 'WHT Deducted' });
+  if (!account)
+    return { error: true, message: 'Account <WHT Deducted> does not exist.' };
+  const whtAccountId = account.id;
 
   let whtAmount = 0;
   if (wht > 0) {
@@ -90,9 +101,12 @@ export const actionInvoicePayment = async (
       payed: true,
     },
   });
-  if (wht == 0) return 'Payment processed';
+  if (wht == 0)
+    return {
+      error: false,
+      message: `Payment for invoice ${description} processed`,
+    };
 
-  const whtAccountId = (await getAccount({ name: 'WHT Deducted' })).id;
   data = {
     date: dateObj,
     amount: whtAmount,
@@ -103,6 +117,8 @@ export const actionInvoicePayment = async (
   };
   await createTransaction(data);
 
-  redirect('/sales/payment');
-  return 'Payment processed';
+  return {
+    error: false,
+    message: `Payment for invoice ${description} processed`,
+  };
 };

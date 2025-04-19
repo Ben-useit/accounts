@@ -5,20 +5,19 @@ import { DateInputField } from '@/components/DateComponent';
 import NumberInputField from '@/components/NumberInputField';
 import Select from '@/components/Select';
 import TextInputField from '@/components/TextInputField';
-import { useActionState, useState, useRef } from 'react';
+import { useActionState, useState } from 'react';
 import { actionInvoicePayment, getInvoiceDetails } from './actions';
 import CheckboxField from '@/components/CheckboxField';
+import { toast } from 'react-toastify';
+import { redirect } from 'next/navigation';
 
 const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [invoiceId, setInvoiceId] = useState(1);
   const [wht, setWht] = useState(3);
-  const [amount, setAmount] = useState('');
-  const [vat, setVat] = useState('');
   const [descInput, setDescInput] = useState('');
-  //const [description, setDescription] = useState('');
-  const formRef = useRef<HTMLFormElement>(null);
-
+  const [amountInput, setAmountInput] = useState('');
+  const [vatInput, setVatInput] = useState('');
   const handleInvoiceSelect = async (invoiceId: number) => {
     setInvoiceId(invoiceId);
     const result = await getInvoiceDetails(invoiceId);
@@ -27,25 +26,34 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
       return;
     }
     const { amount, vat, description } = result;
-    setAmount(amount);
-    setVat(vat);
+    setAmountInput(amount);
+    setVatInput(vat);
     setDescInput(description);
   };
   const action = async (prevState: string | null, formdata: FormData) => {
-    const actionResult = await actionInvoicePayment(invoiceId, wht, formdata);
-    return actionResult;
+    const { error, message } = await actionInvoicePayment(
+      invoiceId,
+      wht,
+      formdata
+    );
+
+    if (error) toast.error(message);
+    else {
+      toast.success(message);
+      redirect('/sales/payment');
+    }
+    return '';
   };
-  const cancelAction = () => {
-    formRef.current?.reset();
-  };
+  const cancelAction = () => {};
   const [message, formAction] = useActionState(action, null);
   const [invalid, setInvalid] = useState(false);
+  const [dateInput, setDateInput] = useState('');
   return (
     <>
       <div className='text-2xl'>Invoice Payment</div>
       {message && <div className='text-xl'>{message}</div>}
       {errorMessage && <div className='text-xl'>{errorMessage}</div>}
-      <form action={formAction} ref={formRef}>
+      <form action={formAction}>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div></div>
           <div></div>
@@ -59,7 +67,14 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
 
           {/* </div>
         <div className='mt-2 grid grid-cols-4  gap-4'> */}
-          <DateInputField label='Date' name='date' setInvalid={setInvalid} />
+          <DateInputField
+            label='Date'
+            name='date'
+            setInvalid={setInvalid}
+            value={dateInput}
+            setValue={setDateInput}
+            onChange={(e) => setDateInput(e.target.value)}
+          />
         </div>
         <div className='mt-2 grid grid-cols-4  gap-4'>
           <div className='col-span-3'>
@@ -76,7 +91,10 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
               label='Amount'
               name='amount'
               placeholder=''
-              initial={amount}
+              value={amountInput}
+              setValue={setAmountInput}
+              onChange={(e) => setAmountInput(e.target.value)}
+              setInvalid={setInvalid}
             />
           </div>
           <div className='col-start-4'>
@@ -87,7 +105,10 @@ const Form = ({ invoices }: { invoices: { id: number; name: string }[] }) => {
               label='VAT'
               name='vat'
               placeholder=''
-              initial={vat}
+              value={vatInput}
+              setValue={setVatInput}
+              onChange={(e) => setVatInput(e.target.value)}
+              setInvalid={setInvalid}
             />
           </div>
         </div>
