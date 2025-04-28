@@ -18,6 +18,7 @@ const EditTransaction = async ({
   const transaction = {
     ...result,
     amount: result.amount.toNumber(),
+    rate: result.rate?.toNumber(),
   };
   return (
     <Form

@@ -6,6 +6,7 @@ import BlockComponent, { TotalComponent } from './component';
 const IncomeStatement = async () => {
   const { periodStart, periodEnd } = await getPeriodAsDate();
   const tax = await getTaxObligation();
+
   const { total: incomeBusiness, balances: incomeBusinessBalances } =
     await getBalances(
       { type: 'INCOME', group: 'Taxable' },
@@ -24,7 +25,7 @@ const IncomeStatement = async () => {
     );
   const { total: expensesBusiness, balances: expensesBusinessBalances } =
     await getBalances(
-      { type: 'EXPENSES', domain: 'BUSINESS' },
+      { type: 'EXPENSES', domain: 'BUSINESS', currency: 'MWK' },
       {
         periodStart,
         periodEnd,

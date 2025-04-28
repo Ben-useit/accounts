@@ -14,10 +14,14 @@ export const actionTransaction = async (
   creditId: number,
   formData: FormData
 ) => {
-  const { date, description, amount, noUpdate } = Object.fromEntries(formData);
+  const { date, description, amount, noUpdate, rate } =
+    Object.fromEntries(formData);
   const amountNumber = convertStringToNumber(amount as string);
   if (amountNumber == null)
     return { error: true, message: 'Amount is not a valid number' };
+  const rateNumber = convertStringToNumber(rate as string);
+  if (rateNumber == null)
+    return { error: true, message: 'Rate is not a valid number' };
 
   const dateObj = convertStringToDate(date as string);
   if (dateObj == null)
@@ -25,6 +29,7 @@ export const actionTransaction = async (
   const data = {
     date: dateObj,
     amount: amountNumber,
+    rate: rateNumber,
     debitId: expensesId,
     creditId,
     description: description as string,

@@ -24,6 +24,7 @@ const Form = ({
   const [descInput, setDescInput] = useState('');
   const [dateInput, setDateInput] = useState(convertDateToString(new Date()));
   const [amountInput, setAmountInput] = useState('');
+  const [rateInput, setRateInput] = useState('1.00');
 
   const action = async (prevState: string | null, formdata: FormData) => {
     const { error, message } = await actionTransaction(
@@ -102,6 +103,19 @@ const Form = ({
             entries={creditAccounts}
             onSelect={setCreditId}
           />
+        </div>
+        <div className='mt-2 grid grid-cols-4  gap-4'>
+          <div className='col-start-4'>
+            <NumberInputField
+              label='Exchange Rate'
+              name='rate'
+              placeholder=''
+              value={rateInput}
+              setValue={setRateInput}
+              onChange={(e) => setRateInput(e.target.value)}
+              setInvalid={setInvalid}
+            />
+          </div>
         </div>
 
         <div className='border-b mt-6 border-gray-300'></div>

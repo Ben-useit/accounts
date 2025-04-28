@@ -16,6 +16,7 @@ type TransactionType = {
   id: number;
   date: Date;
   amount: number;
+  rate: number;
   debitId: number;
   creditId: number;
   description: string | null;
@@ -45,10 +46,11 @@ const Form = ({
   const [invalid, setInvalid] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
-  const { id, date, description, amount } = transaction;
+  const { id, date, description, amount, rate } = transaction;
   const [descInput, setDescInput] = useState(description);
   const [dateInput, setDateInput] = useState(convertDateToString(date));
   const [amountInput, setAmountInput] = useState(convertNumberToString(amount));
+  const [rateInput, setRateInput] = useState(convertNumberToString(rate));
   const router = useRouter();
   const action = async (prevState: string | null, formdata: FormData) => {
     const { error, message } = await actionTransaction(
@@ -127,6 +129,19 @@ const Form = ({
             entries={creditAccounts}
             onSelect={setCreditId}
           />
+        </div>
+        <div className='mt-2 grid grid-cols-4  gap-4'>
+          <div className='col-start-4'>
+            <NumberInputField
+              label='Exchange Rate'
+              name='rate'
+              placeholder=''
+              value={rateInput}
+              setValue={setRateInput}
+              onChange={(e) => setRateInput(e.target.value)}
+              setInvalid={setInvalid}
+            />
+          </div>
         </div>
 
         <div className='mt-2 grid grid-cols-4  gap-4'>

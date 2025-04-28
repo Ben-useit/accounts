@@ -83,6 +83,7 @@ model Transaction {
   id       Int  @id @default(autoincrement())
   date DateTime
   amount Decimal
+  rate Decimal @default(1)
   debit   Account @relation(name: "debit", fields: [debitId], references: [id])
   debitId Int 
   credit   Account @relation(name: "credit", fields: [creditId], references: [id])

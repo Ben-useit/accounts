@@ -25,28 +25,47 @@ export const getTaxObligation = async () => {
   const periodStart = convertStringToDate(period.periodStart) as Date;
   const periodEnd = convertStringToDate(period.periodEnd) as Date;
   const { total: carExpensesGross } = await getBalances(
-    { type: 'EXPENSES', group: 'Car' },
+    { type: 'EXPENSES', group: 'Car', currency: 'MWK' },
     { periodStart, periodEnd }
   );
-  const carExpenses = Number((carExpensesGross * 0.85).toFixed(2));
+  const { total: carExpensesGrossEuro } = await getBalances(
+    { type: 'EXPENSES', group: 'Car', currency: 'Euro' },
+    { periodStart, periodEnd }
+  );
+  const totalCarExpenses = carExpensesGross + carExpensesGrossEuro;
+  const carExpenses = Number((totalCarExpenses * 0.85).toFixed(2));
   const { total: expenses } = await getBalances(
-    { type: 'EXPENSES', group: 'Business' },
+    { type: 'EXPENSES', group: 'Business', currency: 'MWK' },
     { periodStart, periodEnd }
   );
+  const { total: expensesEuro } = await getBalances(
+    { type: 'EXPENSES', group: 'Business', currency: 'Euro' },
+    { periodStart, periodEnd }
+  );
+
+  const totalExpenses = expenses + expensesEuro;
+
   const { total: income } = await getBalances(
     { type: 'INCOME', group: 'Taxable' },
     { periodStart, periodEnd }
   );
-  const profit = Math.abs(income) - expenses - carExpenses;
+  const profit = Math.abs(income) - totalExpenses - carExpenses;
   const tax = calculateTax(profit);
   return tax;
 };
 
 export const getBalances = async (
-  args: { name?: string; type?: AccountType; group?: string; domain?: Domain },
+  args: {
+    name?: string;
+    type?: AccountType;
+    group?: string;
+    domain?: Domain;
+    currency?: string;
+  },
   period: { periodStart: Date; periodEnd: Date }
 ) => {
   let total = 0;
+
   const balances: BalanceType[] = [];
   const result = await prisma.account.findMany({
     where: {
@@ -54,19 +73,77 @@ export const getBalances = async (
       type: args.type,
       group: { name: args.group },
       domain: args.domain,
+      currency: { name: args.currency },
     },
   });
+  //TODO remove hard coded value
+  if (args.currency == 'Euro') {
+    for (const { name } of result) {
+      const balance = await getForexBalance(
+        { name },
+        { periodStart: period.periodStart, periodEnd: period.periodEnd }
+      );
 
-  for (const { name } of result) {
-    const balance = await getBalance(
-      { name },
-      { periodStart: period.periodStart, periodEnd: period.periodEnd }
-    );
+      total += balance;
+      balances.push({ name, balance });
+    }
+    return { total, balances };
+  } else {
+    for (const { name } of result) {
+      const balance = await getBalance(
+        { name },
+        { periodStart: period.periodStart, periodEnd: period.periodEnd }
+      );
 
-    total += balance;
-    balances.push({ name, balance });
+      total += balance;
+      balances.push({ name, balance });
+    }
+    return { total, balances };
   }
-  return { total, balances };
+};
+
+const getForexBalance = async (
+  args: { name?: string; type?: AccountType; group?: string },
+  period: { periodStart: Date; periodEnd: Date }
+) => {
+  let debitAmount = 0;
+  let creditAmount = 0;
+  const debitResult = await prisma.transaction.findMany({
+    where: {
+      debit: {
+        name: args.name,
+        type: args.type,
+        group: { name: args.group },
+      },
+      date: {
+        gte: period.periodStart,
+        lte: period.periodEnd,
+      },
+    },
+  });
+  debitResult.forEach(async ({ amount, rate }) => {
+    if (rate) debitAmount += amount.toNumber() * rate.toNumber();
+    else debitAmount += amount.toNumber();
+  });
+
+  const creditResult = await prisma.transaction.findMany({
+    where: {
+      credit: {
+        name: args.name,
+        type: args.type,
+        group: { name: args.group },
+      },
+      date: {
+        gte: period.periodStart,
+        lte: period.periodEnd,
+      },
+    },
+  });
+  creditResult.forEach(async ({ amount, rate }) => {
+    if (rate) creditAmount += amount.toNumber() * rate.toNumber();
+    else creditAmount += amount.toNumber();
+  });
+  return debitAmount - creditAmount;
 };
 
 const getBalance = async (
