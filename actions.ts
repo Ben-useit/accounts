@@ -1,6 +1,6 @@
 'use server';
 import prisma from '@/utils/db';
-import { AccountType } from '@prisma/client';
+import { AccountType, Domain } from '@prisma/client';
 import { getPeriod, setPeriod } from './prisma/queries';
 import { convertStringToDate } from './utils/convert';
 import { calculateTax } from './utils/tax';
@@ -43,7 +43,7 @@ export const getTaxObligation = async () => {
 };
 
 export const getBalances = async (
-  args: { name?: string; type?: AccountType; group?: string },
+  args: { name?: string; type?: AccountType; group?: string; domain?: Domain },
   period: { periodStart: Date; periodEnd: Date }
 ) => {
   let total = 0;
@@ -53,6 +53,7 @@ export const getBalances = async (
       name: args.name,
       type: args.type,
       group: { name: args.group },
+      domain: args.domain,
     },
   });
 

@@ -8,7 +8,7 @@ export const actionNewInvoice = async (
   vatVal: number,
   formData: FormData
 ) => {
-  const { date, description, amount, reimbursement, openingBalance } =
+  const { date, description, amount, reimbursement, openingBalance, noEFD } =
     Object.fromEntries(formData);
 
   const amountNumber = convertStringToNumber(amount as string);
@@ -68,13 +68,24 @@ export const actionNewInvoice = async (
     }
   }
 
-  account = await getAccount({ name: 'VAT' });
-  if (!account)
-    return {
-      error: true,
-      message: 'Account <VAT> does not exist.',
-    };
-  const vatId = account.id;
+  let vatId: number;
+  if (noEFD) {
+    account = await getAccount({ name: 'VAT (no EFD)' });
+    if (!account)
+      return {
+        error: true,
+        message: 'Account <VAT (no EFD)> does not exist.',
+      };
+    vatId = account.id;
+  } else {
+    account = await getAccount({ name: 'VAT' });
+    if (!account)
+      return {
+        error: true,
+        message: 'Account <VAT> does not exist.',
+      };
+    vatId = account.id;
+  }
 
   let data = {
     date: dateObj,
@@ -86,7 +97,7 @@ export const actionNewInvoice = async (
   };
   await createTransaction(data);
 
-  if (openingBalance || vat == 0)
+  if (vat == 0)
     return { error: false, message: `Invoice ${description} proceeded` };
 
   data = {

@@ -21,7 +21,7 @@ export const getTransactions = async (
 ): Promise<TransactionListType[]> => {
   const transactions = await prisma.transaction.findMany({
     where: { OR: [{ creditId: accountId }, { debitId: accountId }] },
-    orderBy: { date: 'asc' },
+    orderBy: [{ date: 'asc' }, { id: 'asc' }],
   });
   const reverse =
     type === 'EQUITY' || type === 'LIABILITIES' || type === 'INCOME';

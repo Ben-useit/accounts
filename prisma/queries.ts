@@ -1,6 +1,35 @@
 import { convertStringToDate } from '@/utils/convert';
 import prisma from '@/utils/db';
 
+// export const getIncomplete = async () => {
+//   const result = await prisma.invoice.updateMany({ data: { payed: false } });
+// const result = await prisma.transaction.findMany({
+//   where: {
+//     creditId: 2,
+//     debitId: 1,
+//   },
+// });
+// result.forEach(async (t) => {
+//   console.log('...................................');
+//   const { id, amount, date, invoiceId, description } = t;
+//   const vat = Number((Number(amount) * 0.165).toFixed(2));
+//   await prisma.transaction.update({
+//     where: { id: id },
+//     data: {
+//       //date: date,
+//       //description: `${description} VAT`,
+//       amount: 0,
+//       //debitId: 1,
+//       //creditId: 2,
+//       invoiceId: invoiceId,
+//     },
+//   });
+
+//   //console.log(result);
+// });
+//   console.log('done');
+// };
+
 export const getPeriod = async () => {
   const periodStart = await prisma.setting.findFirst({
     where: { name: 'periodStart' },

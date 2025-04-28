@@ -35,6 +35,20 @@ export const getInvoiceDetails = async (invoicedId: number) => {
   if (data) {
     vat = Number(data.amount);
     amount = amount - vat;
+  } else {
+    // Check the other VAT account
+    data = await prisma.transaction.findFirst({
+      where: {
+        invoiceId: invoicedId,
+        credit: {
+          name: 'VAT (no EFD)',
+        },
+      },
+    });
+    if (data) {
+      vat = Number(data.amount);
+      amount = amount - vat;
+    }
   }
 
   return {
@@ -46,6 +60,84 @@ export const getInvoiceDetails = async (invoicedId: number) => {
 };
 
 export const actionInvoicePayment = async (
+  invoiceId: number,
+  wht: number,
+  formData: FormData
+) => {
+  const { date, description, amount, vatIncluded, vat } =
+    Object.fromEntries(formData);
+
+  let amountNumber = convertStringToNumber(amount as string);
+  //const invoiceAmount = amountNumber;
+  if (amountNumber == null)
+    return { error: true, message: 'Amount is not a valid number' };
+
+  const dateObj = convertStringToDate(date as string);
+  if (dateObj == null)
+    return { error: true, message: 'You entered an invalid date string' };
+
+  let account = await getAccount({ name: 'Standard Bank' });
+  if (!account)
+    return { error: true, message: 'Account <Standard Bank> does not exist.' };
+  const debitId = account.id;
+  account = await getAccount({ name: 'Receivables' });
+  if (!account)
+    return { error: true, message: 'Account <Receivables> does not exist.' };
+  const creditId = account.id;
+  account = await getAccount({ name: 'WHT Deducted' });
+  if (!account)
+    return { error: true, message: 'Account <WHT Deducted> does not exist.' };
+  const whtAccountId = account.id;
+
+  let whtNumber = 0;
+  let vatNumber = convertStringToNumber(vat as string) || 0;
+
+  if (vatIncluded) {
+    const deducted = Number((amountNumber / 1.165).toFixed(2));
+    vatNumber = amountNumber - deducted;
+    amountNumber = deducted;
+  }
+  whtNumber = amountNumber * wht;
+  amountNumber = amountNumber - whtNumber;
+
+  let data = {
+    date: dateObj,
+    amount: amountNumber + vatNumber,
+    debitId,
+    creditId,
+    description: `${description as string} payment`,
+    invoiceId: invoiceId,
+  };
+
+  await createTransaction(data);
+  if (wht > 0) {
+    data = {
+      date: dateObj,
+      amount: whtNumber,
+      debitId: whtAccountId,
+      creditId,
+      description: `${description as string} WHT deduction`,
+      invoiceId: invoiceId,
+    };
+    await createTransaction(data);
+  }
+
+  await prisma.invoice.update({
+    where: {
+      id: invoiceId,
+    },
+    data: {
+      payed: true,
+    },
+  });
+
+  return {
+    error: false,
+    message: `Payment for invoice ${description} processed`,
+  };
+};
+
+export const actionInvoicePaymentA = async (
   invoiceId: number,
   wht: number,
   formData: FormData

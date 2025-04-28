@@ -27,8 +27,8 @@ const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
     if (error) toast.error(message);
     else {
       toast.success(message);
-      setDescInput('');
-      setAmountInput('');
+      //setDescInput('');
+      //setAmountInput('');
     }
     return '';
   };
@@ -104,17 +104,11 @@ const Form = ({ clients }: { clients: { id: number; name: string }[] }) => {
         <div className='mt-6 grid grid-cols-5  gap-4'>
           <div className='col-start-1 col-span-5 flex justify-end'>
             <CheckboxField label='Reimbursement Invoice' name='reimbursement' />
-            {/* <input
-              type='checkbox'
-              name='reimbursement'
-              className='inline-flex'
-            />
-            <label
-              htmlFor='checkbox'
-              className='pl-3 py-1.5 pr-3 text-gray-900'
-            >
-              Reimbursement Invoice
-            </label> */}
+          </div>
+        </div>
+        <div className='mt-6 grid grid-cols-5  gap-4'>
+          <div className='col-start-1 col-span-5 flex justify-end'>
+            <CheckboxField label='No EFD receipt issued' name='noEFD' />
           </div>
         </div>
         <div className='mt-6 grid grid-cols-5  gap-4'>

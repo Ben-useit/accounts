@@ -24,7 +24,7 @@ const IncomeStatement = async () => {
     );
   const { total: expensesBusiness, balances: expensesBusinessBalances } =
     await getBalances(
-      { type: 'EXPENSES', group: 'Business' },
+      { type: 'EXPENSES', domain: 'BUSINESS' },
       {
         periodStart,
         periodEnd,

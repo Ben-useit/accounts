@@ -1,6 +1,7 @@
 import { getAccount } from '@/prisma/queries';
 import { getTransactions } from './actions';
 import TransactionList from './component';
+import { redirect } from 'next/navigation';
 
 const AccountDetail = async ({
   params,
@@ -8,6 +9,7 @@ const AccountDetail = async ({
   params: Promise<{ id: string }>;
 }) => {
   const id = Number((await params).id);
+  if (id.toString() == 'NaN') redirect('/');
   const data = await getAccount({ id });
   if (!data)
     return (
