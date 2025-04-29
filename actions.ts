@@ -30,7 +30,8 @@ export const getTaxObligation = async () => {
   );
   const { total: carExpensesGrossEuro } = await getBalances(
     { type: 'EXPENSES', group: 'Car', currency: 'Euro' },
-    { periodStart, periodEnd }
+    { periodStart, periodEnd },
+    true
   );
   const totalCarExpenses = carExpensesGross + carExpensesGrossEuro;
   const carExpenses = Number((totalCarExpenses * 0.85).toFixed(2));
@@ -40,7 +41,8 @@ export const getTaxObligation = async () => {
   );
   const { total: expensesEuro } = await getBalances(
     { type: 'EXPENSES', group: 'Business', currency: 'Euro' },
-    { periodStart, periodEnd }
+    { periodStart, periodEnd },
+    true
   );
 
   const totalExpenses = expenses + expensesEuro;
@@ -62,7 +64,8 @@ export const getBalances = async (
     domain?: Domain;
     currency?: string;
   },
-  period: { periodStart: Date; periodEnd: Date }
+  period: { periodStart: Date; periodEnd: Date },
+  exchange = false
 ) => {
   let total = 0;
 
@@ -77,7 +80,7 @@ export const getBalances = async (
     },
   });
   //TODO remove hard coded value
-  if (args.currency == 'Euro') {
+  if (args.currency == 'Euro' && exchange) {
     for (const { name } of result) {
       const balance = await getForexBalance(
         { name },

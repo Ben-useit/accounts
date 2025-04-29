@@ -14,7 +14,9 @@ export const TotalComponent = ({
       <div
         className={`text-xl col-start-3 text-right font-semibold  justify-end ${style}`}
       >
-        {convertNumberToString(total)}
+        {total > 0
+          ? convertNumberToString(total)
+          : `(${convertNumberToString(Math.abs(total))})`}
       </div>
     </div>
   );
