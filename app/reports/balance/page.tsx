@@ -5,14 +5,12 @@ import {
 } from '@/utils/convert';
 import { getBalances } from '@/actions';
 import { getRetainedEarning } from './action';
-import { getPeriod } from '@/prisma/queries';
+import { getPeriodAsDate } from '@/prisma/queries';
 
 const BalanceSheet = async () => {
-  const data = await getPeriod();
-  const periodStart = convertStringToDate(data.periodStart) as Date;
-  const periodEnd = convertStringToDate(data.periodEnd) as Date;
+  const { periodStart, periodEnd } = await getPeriodAsDate(true);
   const { total: assets, balances: assetBalances } = await getBalances(
-    { type: 'ASSETS' },
+    { type: 'ASSETS', currency: 'MWK' },
     {
       periodStart,
       periodEnd,
@@ -20,14 +18,14 @@ const BalanceSheet = async () => {
   );
   const { total: liabilities, balances: liabilitiesBalances } =
     await getBalances(
-      { type: 'LIABILITIES' },
+      { type: 'LIABILITIES', currency: 'MWK' },
       {
         periodStart,
         periodEnd,
       }
     );
   const { total: equity, balances: balancesEquity } = await getBalances(
-    { type: 'EQUITY' },
+    { type: 'EQUITY', currency: 'MWK' },
     {
       periodStart,
       periodEnd,

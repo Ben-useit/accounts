@@ -15,7 +15,7 @@ export const getPeriod = async () => {
   return { periodStart: periodStart.value, periodEnd: periodEnd.value };
 };
 
-export const getPeriodAsDate = async () => {
+export const getPeriodAsDate = async (periodStartMinusOneDay = false) => {
   const periodStart = await prisma.setting.findFirst({
     where: { name: 'periodStart' },
   });
@@ -27,6 +27,8 @@ export const getPeriodAsDate = async () => {
     throw new Error('Configuration Error: Set Period.');
   const periodStartDate = convertStringToDate(periodStart.value) as Date;
   const periodEndDate = convertStringToDate(periodEnd.value) as Date;
+  if (periodStartMinusOneDay)
+    periodStartDate.setDate(periodStartDate.getDate() - 1);
   return { periodStart: periodStartDate, periodEnd: periodEndDate };
 };
 
