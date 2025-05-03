@@ -8,7 +8,7 @@ export const getRetainedEarning = async ({
   periodEnd: Date;
 }) => {
   const { total: income } = await getBalances(
-    { type: 'INCOME' },
+    { type: 'INCOME', currency: 'MWK' },
     {
       periodStart,
       periodEnd,
@@ -16,7 +16,7 @@ export const getRetainedEarning = async ({
   );
 
   const { total: expenses } = await getBalances(
-    { type: 'EXPENSES' },
+    { type: 'EXPENSES', currency: 'MWK' },
     {
       periodStart,
       periodEnd,

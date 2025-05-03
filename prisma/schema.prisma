@@ -28,11 +28,13 @@ enum AccountType {
   EXPENSES
   EQUITY
   LIABILITIES
+  NEUTRAL
 }
 
 enum Domain {
   BUSINESS
   PERSONAL
+  TAX
 }
 
 model Group {

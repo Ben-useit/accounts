@@ -1,10 +1,20 @@
 import { convertDateToString, convertNumberToString } from '@/utils/convert';
-import { getBalances } from '@/actions';
+import { getBalances, getTaxObligation } from '@/actions';
 import { getRetainedEarning } from './action';
 import { getPeriodAsDate } from '@/prisma/queries';
 
 const BalanceSheet = async () => {
   const { periodStart, periodEnd } = await getPeriodAsDate(true);
+  let tax = await getTaxObligation();
+  let { total: taxPayable } = await getBalances(
+    { name: 'Income Tax Payable', currency: 'MWK' },
+    {
+      periodStart,
+      periodEnd,
+    }
+  );
+  tax += Math.abs(taxPayable);
+
   const { total: assets, balances: assetBalances } = await getBalances(
     { type: 'ASSETS', currency: 'MWK' },
     {
@@ -33,6 +43,8 @@ const BalanceSheet = async () => {
     periodEnd,
   });
 
+  const totalLiability = Math.abs(liabilities) + tax; // Math.abs(equity) + retainedEarning;
+
   return (
     <div className='lg:w-3/4'>
       <div className='text-2xl mb-4 font-semibold'>
@@ -47,6 +59,7 @@ const BalanceSheet = async () => {
           </div>
         );
       })}
+
       <div className='grid grid-cols-4 gap-4 '>
         <div className='col-start-3 text-right font-semibold'>
           {convertNumberToString(assets)}
@@ -73,9 +86,18 @@ const BalanceSheet = async () => {
           </div>
         );
       })}
-      <div className='grid grid-cols-4 gap-4 '>
-        <div className='col-start-3 text-right font-semibold'>
-          {convertNumberToString(Math.abs(liabilities))}
+
+      <div className='grid grid-cols-4 gap-4'>
+        <div>Income Tax Payable</div>
+        <div className='text-right '>{convertNumberToString(tax)}</div>
+      </div>
+
+      <div className='grid grid-cols-4 gap-4 mt-4 mb-4'>
+        <div className='col-span-2 text-2xl font-semibold'>
+          Total Liabilities
+        </div>
+        <div className='col-start-3 text-2xl text-right font-semibold'>
+          {convertNumberToString(Math.abs(liabilities) + tax)}
         </div>
       </div>
 
@@ -97,8 +119,9 @@ const BalanceSheet = async () => {
           {convertNumberToString(retainedEarning)}
         </div>
       </div>
-      <div className='grid grid-cols-4 gap-4 '>
-        <div className='col-start-3 text-right font-semibold'>
+      <div className='grid grid-cols-4 gap-4 mt-4 mb-4'>
+        <div className='col-span-2 text-2xl font-semibold'>Total Equity</div>
+        <div className='col-start-3 text-2xl text-right font-semibold'>
           {convertNumberToString(Math.abs(equity) + retainedEarning)}
         </div>
       </div>
@@ -109,7 +132,7 @@ const BalanceSheet = async () => {
         </div>
         <div className='col-start-3 text-2xl text-right font-semibold'>
           {convertNumberToString(
-            Math.abs(equity) + retainedEarning - liabilities
+            Math.abs(equity) + retainedEarning + totalLiability
           )}
         </div>
       </div>
