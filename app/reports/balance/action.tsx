@@ -3,12 +3,14 @@ import { getBalances, getTaxObligation } from '@/actions';
 export const getRetainedEarning = async ({
   periodStart,
   periodEnd,
+  currency,
 }: {
   periodStart: Date;
   periodEnd: Date;
+  currency: string;
 }) => {
   const { total: income } = await getBalances(
-    { type: 'INCOME', currency: 'MWK' },
+    { type: 'INCOME', currency: currency },
     {
       periodStart,
       periodEnd,
@@ -16,7 +18,7 @@ export const getRetainedEarning = async ({
   );
 
   const { total: expenses } = await getBalances(
-    { type: 'EXPENSES', currency: 'MWK' },
+    { type: 'EXPENSES', currency: currency },
     {
       periodStart,
       periodEnd,
@@ -24,6 +26,9 @@ export const getRetainedEarning = async ({
   );
 
   const profit = Math.abs(income) - expenses;
-  const taxObligation = await getTaxObligation();
-  return profit - taxObligation;
+  if (currency === 'MWK') {
+    const taxObligation = await getTaxObligation();
+    return profit - taxObligation;
+  }
+  return profit;
 };

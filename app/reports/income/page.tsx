@@ -183,22 +183,28 @@ const IncomeStatement = async () => {
         total={forexResult}
         style={forexResult > 0 ? 'mb-4' : 'mb-4 text-red-500'}
       />
-      <TotalComponent
-        label={
-          forexResult > 0
-            ? 'Profit converted in MWK:'
-            : 'Loss converted in MWK:'
-        }
-        total={forexResult * 4000}
-        style={forexResult > 0 ? 'mb-4' : 'mb-4 text-red-500'}
-      />
-      <TotalComponent
-        label={
-          overallResult > 0 ? 'Overall Profit in MWK:' : 'Overall Loss in MWK:'
-        }
-        total={overallResult}
-        style={overallResult > 0 ? 'mb-4' : 'mb-4 text-red-500'}
-      />
+      {forexResult > 0 && (
+        <>
+          <TotalComponent
+            label={
+              forexResult > 0
+                ? 'Profit converted in MWK:'
+                : 'Loss converted in MWK:'
+            }
+            total={forexResult * 4000}
+            style={forexResult > 0 ? 'mb-4' : 'mb-4 text-red-500'}
+          />
+          <TotalComponent
+            label={
+              overallResult > 0
+                ? 'Overall Profit in MWK:'
+                : 'Overall Loss in MWK:'
+            }
+            total={overallResult}
+            style={overallResult > 0 ? 'mb-4' : 'mb-4 text-red-500'}
+          />
+        </>
+      )}
     </div>
   );
 };

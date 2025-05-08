@@ -32,9 +32,7 @@ export const getInvoices = async (clientId: number): Promise<InvoiceType[]> => {
       where: {
         invoiceId: invoice.id,
       },
-      orderBy: {
-        date: 'asc',
-      },
+      orderBy: [{ date: 'asc' }, { id: 'asc' }],
     });
     const payed: { date: Date | null; amount: number } = {
       date: null,
