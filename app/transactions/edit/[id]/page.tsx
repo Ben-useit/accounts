@@ -11,7 +11,8 @@ const EditTransaction = async ({
 }) => {
   const { id } = await params;
   const redirectParams = await searchParams;
-  const redirectTo = redirectParams.redirectTo || '/';
+  let redirectTo = redirectParams.redirectTo || '/';
+  redirectTo = `${redirectTo}#${id}`;
   const result = await getTransaction(Number(id));
   const accounts = await getAccounts();
   if (!result) return <div>{`No transaction with ${id}`}</div>;

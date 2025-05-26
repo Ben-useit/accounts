@@ -1,7 +1,4 @@
-import { convertDateToString, convertNumberToString } from '@/utils/convert';
-
-convertDateToString;
-convertNumberToString;
+import { convertNumberToString } from '@/utils/convert';
 
 type PropsType = {
   total: number;

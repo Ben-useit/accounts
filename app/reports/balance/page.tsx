@@ -1,4 +1,4 @@
-import { convertDateToString, convertNumberToString } from '@/utils/convert';
+import { convertDateToString } from '@/utils/convert';
 import { getBalances, getTaxObligation } from '@/actions';
 import { getRetainedEarning } from './action';
 import { getPeriodAsDate } from '@/prisma/queries';

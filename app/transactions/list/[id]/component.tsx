@@ -32,6 +32,7 @@ const TransactionList = ({
 
         return (
           <div
+            id={id.toString()}
             className='grid grid-cols-[2fr_8fr_2fr_2fr_2fr_1fr_1fr] gap-4 border-b mb-2 pt-2 pb-4'
             key={id}
           >
