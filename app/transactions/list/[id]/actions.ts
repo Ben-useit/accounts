@@ -1,3 +1,4 @@
+import { getStartBalance } from '@/actions';
 import { getPeriodAsDate } from '@/prisma/queries';
 import prisma from '@/utils/db';
 import { AccountType } from '@prisma/client';
@@ -21,7 +22,7 @@ export const getTransactions = async (
   type: AccountType
 ): Promise<TransactionListType[]> => {
   const { periodStart, periodEnd } = await getPeriodAsDate();
-  let totalAmount = await getStartBalance(accountId, periodStart);
+  let totalAmount = await getStartBalance(accountId, type, periodStart);
   const transactions = await prisma.transaction.findMany({
     where: {
       OR: [{ creditId: accountId }, { debitId: accountId }],
@@ -61,27 +62,6 @@ export const getTransactions = async (
         totalAmount,
       });
     }
-    console.log('new Amount: ', totalAmount);
   }
   return transactionsList.reverse();
-};
-
-const getStartBalance = async (id: number, periodStart: Date) => {
-  const credit = await prisma.transaction.aggregate({
-    where: {
-      creditId: id,
-      date: { lt: periodStart },
-    },
-    _sum: { amount: true },
-  });
-  const creditNumber = credit._sum.amount?.toNumber() || 0;
-  const debit = await prisma.transaction.aggregate({
-    where: {
-      debitId: id,
-      date: { lt: periodStart },
-    },
-    _sum: { amount: true },
-  });
-  const debitNumber = debit._sum.amount?.toNumber() || 0;
-  return debitNumber - creditNumber;
 };

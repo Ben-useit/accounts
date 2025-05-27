@@ -1,6 +1,6 @@
 import List from '@/components/List';
 import { getAccounts } from '@/prisma/queries';
-import { getBalance } from './actions';
+import { getStartBalance } from '@/actions';
 
 const ListTransactions = async () => {
   const accounts = await getAccounts();
@@ -8,7 +8,7 @@ const ListTransactions = async () => {
   const accountList: { id: number; name: string; balance: number }[] = [];
   let totalBalance = 0;
   for (const { id, name, type } of accounts) {
-    const balance = await getBalance(id, type);
+    const balance = await getStartBalance(id, type, new Date());
     totalBalance += balance;
     accountList.push({ id, name, balance });
   }

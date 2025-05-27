@@ -190,3 +190,30 @@ const getBalance = async (
   const { amount: creditAmount } = creditResult._sum;
   return Number(debitAmount) - Number(creditAmount);
 };
+
+export const getStartBalance = async (
+  id: number,
+  type: AccountType,
+  periodStart: Date
+) => {
+  const reverse =
+    type === 'EQUITY' || type === 'LIABILITIES' || type === 'INCOME';
+  const credit = await prisma.transaction.aggregate({
+    where: {
+      creditId: id,
+      date: { lt: periodStart },
+    },
+    _sum: { amount: true },
+  });
+  const creditNumber = credit._sum.amount?.toNumber() || 0;
+  const debit = await prisma.transaction.aggregate({
+    where: {
+      debitId: id,
+      date: { lt: periodStart },
+    },
+    _sum: { amount: true },
+  });
+  const debitNumber = debit._sum.amount?.toNumber() || 0;
+  if (reverse) return creditNumber - debitNumber;
+  return debitNumber - creditNumber;
+};
