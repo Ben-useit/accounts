@@ -4,7 +4,7 @@ import Form from './form';
 const InvoicePayment = async () => {
   const invoices = await getInvoices();
 
-  if (invoices.length == 0) return <h1>No unpayed invoices!</h1>;
+  if (invoices.length == 0) return <h1>No unpaid invoices!</h1>;
 
   return (
     <div className='lg:w-3/4'>

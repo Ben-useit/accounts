@@ -76,7 +76,10 @@ model Invoice {
   id   Int  @id @default(autoincrement())
   name String
   transaction Transaction[]
-  payed Boolean @default(false)
+  //payed Boolean @default(false)
+  issued DateTime @default(now())
+  paid DateTime?
+  amount Decimal @default(0)
   client Client? @relation(fields:[clientId], references: [id])
   clientId Int?
 }

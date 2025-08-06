@@ -127,7 +127,7 @@ export const actionInvoicePayment = async (
       id: invoiceId,
     },
     data: {
-      payed: true,
+      paid: dateObj,
     },
   });
 
@@ -190,7 +190,7 @@ export const actionInvoicePaymentA = async (
       id: invoiceId,
     },
     data: {
-      payed: true,
+      paid: dateObj,
     },
   });
   if (wht == 0)

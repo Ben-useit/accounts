@@ -2,12 +2,6 @@
 import prisma from '@/utils/db';
 import { AccountType, Domain } from '@prisma/client';
 
-/**
- * Returns a list of transactions related to the given transaction
- *
- * @param id
- */
-
 export const actionDelete = async (props: ResultType) => {
   const { invoice, transactions } = props;
   transactions.forEach(async ({ id }) => {
@@ -26,7 +20,6 @@ export type ResultType = {
   invoice: {
     id: number;
     name: string;
-    payed: boolean;
     clientId: number | null;
   } | null;
   clientName: string;

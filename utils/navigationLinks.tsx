@@ -97,6 +97,11 @@ export const sideBarItems = [
         text: 'Balance Sheet',
         url: '/reports/balance',
       },
+      {
+        icon: <DocumentTextIcon />,
+        text: 'Unpaid Invoices',
+        url: '/reports/unpaid',
+      },
     ],
     text: 'Reports',
   },

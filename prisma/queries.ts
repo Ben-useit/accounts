@@ -146,7 +146,7 @@ export const createInvoice = async (data: InvoiceType) => {
 export const getInvoices = async () => {
   const result = await prisma.invoice.findMany({
     where: {
-      payed: false,
+      paid: { equals: null },
     },
     select: {
       id: true,

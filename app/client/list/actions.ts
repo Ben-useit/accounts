@@ -7,7 +7,7 @@ import prisma from '@/utils/db';
 export const getInvoiceBalance = async (clientId: number) => {
   const result = await prisma.transaction.aggregate({
     where: {
-      invoice: { clientId: clientId, payed: false },
+      invoice: { clientId: clientId, paid: { equals: null } },
       debit: { name: 'Receivables' },
     },
     _sum: {

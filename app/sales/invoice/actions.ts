@@ -27,6 +27,7 @@ export const actionNewInvoice = async (
   // Create Invoice first
   const invoiceData = {
     name: description as string,
+    amount: amountNumber,
     clientId,
   };
 
